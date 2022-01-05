@@ -3,7 +3,7 @@
 using namespace std;
 
 typedef void (*func_ptr)(Stack* stack);
-map<string , func_ptr> funcMap;
+map<string, func_ptr> funcMap;
 
 void call_inbuilt(vector<uint8_t> name, Stack* stack) {
     string str = bytes_to_string(name);
