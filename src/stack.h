@@ -2,7 +2,9 @@
 #define STACK_H
 
 #include <vector>
+#include <string>
 #include "values.h"
+#include "logger.h"
 
 class Stack {
 private:
@@ -13,8 +15,12 @@ public:
         stack.push_back(value);
     }
 
-    Value* pop() { 
-        Value* val = stack.back();
+    Value* pop(std::string error = "Nothing to pop from stack") {
+        if (stack.size() < 1) {
+            FAIL << error;
+        }
+        Value* val = stack.back();;
+        
         stack.pop_back();
         return val;
     }

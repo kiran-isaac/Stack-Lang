@@ -45,6 +45,10 @@
         "sstream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "cinttypes": "cpp"
+    },
+    "workbench.editorAssociations": {
+        "*.hex": "hexEditor.hexedit"
     }
 }

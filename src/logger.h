@@ -11,6 +11,6 @@ class ErrorLogger : public std::basic_ostringstream<char> {
         }
 };
 
-#define DIE ErrorLogger()
+#define FAIL ErrorLogger()
 
 #endif

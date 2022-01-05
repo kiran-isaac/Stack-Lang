@@ -7,26 +7,30 @@ map<string , func_ptr> funcMap;
 
 void call_inbuilt(vector<uint8_t> name, Stack* stack) {
     string str = bytes_to_string(name);
-    cout << str << endl;
+    func_ptr ptr = funcMap[str];
+    if (ptr == nullptr) {
+        FAIL << "Cannot locate inbuilt: " << str;
+    }
     funcMap[str](stack);
 }
 
 void print(Stack* stack) {
-    uint32_t mode = stack->pop()->number;
+    uint32_t mode = stack->pop("[Inbuilt Function : print] Cannot pop parameter 0: print datatype")->number;
     switch (mode) {
         case 0:
-            cout << stack->pop()->number << endl;
+            cout << stack->pop("[Inbuilt Function : print] Cannot pop parameter 1: print value")->number << endl;
             break;
         default:
-            DIE << "[Inbuilt Function : print]: Invalid value for print type. Push the print type before calling print";
+            FAIL << "[Inbuilt Function : print]: Invalid value for print datatype. Push the print datatype before calling print";
     }
 }
 
-void add(Stack* stack) {
-
+void exit(Stack* stack) {
+    uint32_t code = stack->pop("[Inbuilt Function : exit] Cannot pop parameter 0: exit code")->number;
+    exit(code);
 }
 
 void init_inbuilts() {
     funcMap["print"] = &print;
-    funcMap["add"] = &print;
+    funcMap["exit"] = &exit;
 }

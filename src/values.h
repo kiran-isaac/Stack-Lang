@@ -8,7 +8,7 @@ enum class ValueType {
 
 struct Value {
     ValueType type;
-    double number;
+    float number;
 };
 
 #define NUMBER(value) Value{ValueType::NUMBER, value}
