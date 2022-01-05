@@ -2,14 +2,13 @@
 #define VALUE_H
 
 enum class ValueType {
-    NUMBER
+    NUMBER,
+    POINTER
 };
 
 struct Value {
     ValueType type;
-    union {
-        double number;
-    };
+    double number;
 };
 
 #define NUMBER(value) Value{ValueType::NUMBER, value}

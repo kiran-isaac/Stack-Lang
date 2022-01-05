@@ -6,9 +6,12 @@
 #include "values.h"
 #include "stack.h"
 #include "byte_ops.h"
+#include "logger.h"
 
-void print(Stack*);
+#define FUNC_CALL_MODE_INBUILT 0x00
 
-void call_inbuilt(uint32_t id);
+void init_inbuilts();
+
+void call_inbuilt(std::vector<uint8_t> name, Stack* stack);
 
 #endif

@@ -27,19 +27,25 @@ public:
     void exec()
     {
         constants.push_back(new NUMBER(100.1));
+        constants.push_back(new NUMBER(1));
         code = {
             0x01,
             0x00,
             0x00,
             0x00,
             0x00,
-            OP_FUNC_CALL,
+            0x01,
             0x00,
-            0x70,
-            0x72, 
-            0x69, 
-            0x6e, 
-            0x74,
+            0x00,
+            0x00,
+            0x01,
+            OP_FUNC_CALL,
+            FUNC_CALL_MODE_INBUILT,
+            'p',
+            'r', 
+            'i', 
+            'n', 
+            't',
             0x00,
             0x00
         };
@@ -49,7 +55,7 @@ public:
         eval();
     }
 
-    Value eval()
+    void eval()
     {
         while (true)
         {
@@ -57,7 +63,7 @@ public:
             switch (opcode)
             {
             case OP_HALT:
-                return *(stack->pop());
+                return;
             case OP_CONST:
                 stack->push(GET_CONSTANT());
                 break;
@@ -65,10 +71,14 @@ public:
                 switch (READ_BYTE())
                 {
                 case 0x00:
-                    auto is_null = [](uint8_t i){ return i == 0x00; };
-                    auto p = std::partition_point(code.begin(), code.end(), is_null);
-                    std::vector<uint8_t> string(this->code.begin(), p);
-                    call_inbuilt(string)
+                    uint8_t byte;
+                    std::vector<uint8_t> string;
+                    do {
+                        byte = READ_BYTE();
+                        string.push_back(byte);
+                    } while (byte != 0x00);
+                    string.pop_back();
+                    call_inbuilt(string, stack);
                     READ_BYTES(string.size());
                     break;
                 }
