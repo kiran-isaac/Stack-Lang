@@ -7,6 +7,7 @@
 #include "stack.h"
 #include "byte_ops.h"
 #include "logger.h"
+#include "datatypes.h"
 
 #define FUNC_CALL_MODE_INBUILT 0x00
 

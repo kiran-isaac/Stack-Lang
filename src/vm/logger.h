@@ -3,14 +3,14 @@
 
 #include <sstream>
 
-class ErrorLogger : public std::basic_ostringstream<char> {
+class VMErrorLogger : public std::basic_ostringstream<char> {
     public:
-        ~ErrorLogger() {
-            fprintf(stderr, "Fatal error: %s\n", str().c_str());
+        ~VMErrorLogger() {
+            fprintf(stderr, "Fatal runtime error: %s\n", str().c_str());
             exit(1);
         }
 };
 
-#define FAIL ErrorLogger()
+#define FAIL VMErrorLogger()
 
 #endif

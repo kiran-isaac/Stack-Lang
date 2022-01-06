@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/baskvm",
-            "args": ["run", "${workspaceFolder}/test/test.bskbyte"],
+            "args": ["compile", "${workspaceFolder}/test/test.basm"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
@@ -29,6 +29,5 @@
                 }
             ]
         }
-        
     ]
 }

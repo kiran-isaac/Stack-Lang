@@ -17,7 +17,8 @@
 #include "values.h"
 #include "inbuilt.h"
 
-#define BUFFER_SIZE 1000
+// 10kB
+#define BUFFER_SIZE 1024 * 10
 
 #define READ_BYTE() *ip++
 #define READ_BYTES(n) {for (int i = 0; i < n; i++) {READ_BYTE();}}

@@ -25,6 +25,12 @@ void print(Stack* stack) {
     }
 }
 
+void add(Stack* stack) {
+    float op1 = stack->pop("[Inbuilt Function : add] Cannot pop parameter 0: operand")->number;
+    float op2 = stack->pop("[Inbuilt Function : add] Cannot pop parameter 1: operand")->number;
+    stack->push(new NUMBER(op1 + op2));
+}
+
 void exit(Stack* stack) {
     uint32_t code = stack->pop("[Inbuilt Function : exit] Cannot pop parameter 0: exit code")->number;
     exit(code);
