@@ -9,9 +9,9 @@
 #include <algorithm>
 #include <iterator>
 #include <fstream>
-#include "datatypes.h"
+#include "../datatypes.h"
 #include "byte_ops.h"
-#include "opcode.h"
+#include "../opcode.h"
 #include "stack.h"
 #include "logger.h"
 #include "values.h"

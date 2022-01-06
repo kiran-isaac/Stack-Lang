@@ -7,7 +7,7 @@ enum TokenType {
     KW_PUSH,
     KW_CALL,
     KW_INBUILT,
-    KW_ID,
+    ID,
     NUM_LIT,
 };
 

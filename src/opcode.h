@@ -9,4 +9,6 @@
 // call func
 #define OP_FUNC_CALL 0x02
 
+#define FUNC_CALL_MODE_INBUILT 0x00
+
 #endif
