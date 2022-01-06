@@ -39,4 +39,5 @@ void exit(Stack* stack) {
 void init_inbuilts() {
     funcMap["print"] = &print;
     funcMap["exit"] = &exit;
+    funcMap["add"] = &add;
 }

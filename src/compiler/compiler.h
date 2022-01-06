@@ -15,6 +15,7 @@
 #include "logger.h"
 #include "../opcode.h"
 #include "../datatypes.h"
+#include "string_ops.h"
 
 // 10kB
 #define BUFFER_SIZE 1024 * 10
@@ -33,6 +34,7 @@ public:
     std::vector<Token> Tokenize();
     WORD add_constant(Value val);
     std::vector<BYTE> get_constants();
+    void expand_macros();
 
     std::vector<Value> constants;
     std::string filename;
@@ -43,6 +45,8 @@ public:
     // Priorities
     std::map<std::string, TokenType> token_map1;
     std::map<std::string, TokenType> token_map2;
+
+    std::map<std::string, std::string> macros_map;
 };
 
 #endif /* A0309F06_E921_4D1E_838C_70638E041BD3 */

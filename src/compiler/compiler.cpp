@@ -27,37 +27,10 @@ Compiler::Compiler(char* fname) {
     token_map1["^[-]?([0-9]*[.])?[0-9]+$"] = TokenType::NUM_LIT;
 
     token_map2["^[A-Za-z_]+$"] = TokenType::ID;
+
+    macros_map["+"] = "CALL INBUILT ADD";
 }
 
-vector<string> split(std::string str)
-{
-    auto out = vector<string>();
-    string current;
-
-    for (char chr : str) {
-        if (isspace(chr)) {
-            if (current.size() != 0) {
-                out.push_back(current);
-            }
-
-            current = "";
-        } else {
-            current += chr;
-        }
-    }
-
-    return out;
-}
-
-// trim from both ends (in place)
-static inline void trim(std::string &s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }));
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }).base(), s.end());
-}
 
 WORD Compiler::add_constant(Value val) {
     for (int i = 0; i < constants.size(); i++) {
@@ -85,44 +58,58 @@ vector<BYTE> Compiler::get_constants() {
 }
 
 void Compiler::compile() {
+    expand_macros();
     vector<Token> tokens = Tokenize();
-    tokens.push_back(Token{TokenType::ID, "exit"});
     vector<BYTE> out = vector<BYTE>();
     int i = 0;
     while (i < tokens.size()) {
         Token tk = tokens[i];
-        Token tk2 = tokens[i+1];
         switch (tk.type) {
             case TokenType::KW_PUSH:
                 {
+                    Token tk2 = tokens[i+1];
                     if (tk2.type != TokenType::NUM_LIT) {
                         FAIL << "Invalid Token: " << tk2.val;
                         break;
                     }
-                    i += 2;
+                    
                     ADD(OP_CONST);
                     
                     WORD const_index = add_constant(NUMBER(stof(tk2.val)));
                     ADD_WORD(const_index);
-                    break;
+                    i += 2;
+                } 
+                break;
+            case TokenType::NUM_LIT:
+                {
+                    ADD(OP_CONST);
+                        
+                    WORD const_index = add_constant(NUMBER(stof(tk.val)));
+                    ADD_WORD(const_index);
+                    i += 1;
                 }
+                break;
             case TokenType::KW_CALL:
                 {
+                    Token tk2 = tokens[i+1];
                     Token tk3 = tokens[i+2];
                     ADD(OP_FUNC_CALL);
-                    if (tk2.type != TokenType::KW_INBUILT) {
-                        FAIL << "Invalid Token: " << tk2.val;
+                    switch (tk2.type) {
+                        case KW_INBUILT:
+                            ADD(FUNC_CALL_MODE_INBUILT);
+                            if (tk3.type != TokenType::ID) {
+                                FAIL << "Invalid inbuilt name: " << tk3.val;
+                            }
+                            for (char chr : tk3.val) {
+                                ADD((uint8_t)chr);
+                            }
+                            // Null Termination
+                            ADD(0x00);
+                            i += 3;
+                            break;
+                        default:
+                            FAIL << "Invalid call scope: " << tk2.val;
                     }
-                    ADD(FUNC_CALL_MODE_INBUILT);
-                    if (tk3.type != TokenType::ID) {
-                        FAIL << "Invalid Token: " << tk2.val;
-                    }
-                    for (char chr : tk3.val) {
-                        ADD((uint8_t)chr);
-                    }
-                    // Null Termination
-                    ADD(0x00);
-                    i += 3;
                     break;
                 }
             default:
@@ -139,11 +126,21 @@ void Compiler::compile() {
     fout.close();
 }
 
+void Compiler::expand_macros() {
+    map<string, string>::iterator i;
+    for (i = macros_map.begin(); i != macros_map.end(); i++) {
+        size_t pos = 0;
+        while((pos = src.find((i->first), pos)) != std::string::npos) {
+            src.replace(pos, (i->first).length(), (i->second));
+            pos += (i->first).length();
+        }
+    }
+}
+
 vector<Token> Compiler::Tokenize() {
     vector<Token> output = vector<Token>();
     vector<string> strs = split(src);
     for (string str : strs) {
-        trim(str);
         transform(str.begin(), str.end(), str.begin(), ::tolower);
         TokenType tktpe = match(str);
         Token tk = Token{tktpe, str};
