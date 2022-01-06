@@ -1,5 +1,1 @@
-10000.69912
--1 1 +
-CALL INBUILT print
-0
-CALL INBUILT exit
+2 3 &* &num &print 2 3 &* &num &print 0 &exit

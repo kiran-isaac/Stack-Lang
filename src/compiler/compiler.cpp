@@ -2,6 +2,12 @@
 
 using namespace std;
 
+string keyword(string kw) {
+    string kwUpper = kw;
+    transform(kwUpper.begin(), kwUpper.end(), kwUpper.begin(), ::toupper);
+    return "^(" + kw + "|" + kwUpper + ")$";
+} 
+
 Compiler::Compiler(char* fname) {
     filename = fname;
     ifstream file(filename);
@@ -20,15 +26,23 @@ Compiler::Compiler(char* fname) {
 
     constants = vector<Value>();
 
-    
-    token_map1["^inbuilt$"] = TokenType::KW_INBUILT;
-    token_map1["^call$"] = TokenType::KW_CALL;
-    token_map1["^push$"] = TokenType::KW_PUSH;
+    token_map1[keyword("inbuilt")] = TokenType::KW_INBUILT;
+    token_map1[keyword("call")] = TokenType::KW_CALL;
+    token_map1[keyword("push")] = TokenType::KW_PUSH;
+    token_map1["^&\\S+$"] = TokenType::MACRO;
     token_map1["^[-]?([0-9]*[.])?[0-9]+$"] = TokenType::NUM_LIT;
 
     token_map2["^[A-Za-z_]+$"] = TokenType::ID;
 
-    macros_map["+"] = "CALL INBUILT ADD";
+    ADD_INBUILT_MACRO("+", "add");
+    ADD_INBUILT_MACRO("*", "mul");
+    ADD_INBUILT_MACRO("-", "sub");
+    ADD_INBUILT_MACRO("/", "div");
+    ADD_INBUILT_MACRO("print", "print");
+    ADD_INBUILT_MACRO("exit", "exit");
+
+    macros_map["num"] = vector<Token>();
+    macros_map["num"].push_back(Token{TokenType::NUM_LIT, "0", "num"});
 }
 
 
@@ -58,8 +72,11 @@ vector<BYTE> Compiler::get_constants() {
 }
 
 void Compiler::compile() {
-    expand_macros();
-    vector<Token> tokens = Tokenize();
+    extract_macros();
+    remove_directives();
+    vector<Token> tokens = Tokenize(this->src);
+    tokens.reserve(100000);
+    expand_macros(tokens);
     vector<BYTE> out = vector<BYTE>();
     int i = 0;
     while (i < tokens.size()) {
@@ -69,7 +86,7 @@ void Compiler::compile() {
                 {
                     Token tk2 = tokens[i+1];
                     if (tk2.type != TokenType::NUM_LIT) {
-                        FAIL << "Invalid Token: " << tk2.val;
+                        FAIL << "Invalid Token: " << tk2.val << MACRO_ERROR(tk2);
                         break;
                     }
                     
@@ -98,7 +115,8 @@ void Compiler::compile() {
                         case KW_INBUILT:
                             ADD(FUNC_CALL_MODE_INBUILT);
                             if (tk3.type != TokenType::ID) {
-                                FAIL << "Invalid inbuilt name: " << tk3.val;
+                                string macro_error = MACRO_ERROR(tk3);
+                                FAIL << "Invalid inbuilt name: " << tk3.val << macro_error;
                             }
                             for (char chr : tk3.val) {
                                 ADD((uint8_t)chr);
@@ -108,12 +126,14 @@ void Compiler::compile() {
                             i += 3;
                             break;
                         default:
-                            FAIL << "Invalid call scope: " << tk2.val;
+                            FAIL << "Invalid call scope: " << tk2.val << MACRO_ERROR(tk2);
                     }
                     break;
                 }
+            case TokenType::MACRO:
+                FAIL << "Cannot expand macro: " << tk.val;
             default:
-                FAIL << "Invalid Token: " << tk.val;
+                FAIL << "Invalid Token: " << tk.val << MACRO_ERROR(tk);
         }
     }
 
@@ -126,24 +146,65 @@ void Compiler::compile() {
     fout.close();
 }
 
-void Compiler::expand_macros() {
-    map<string, string>::iterator i;
-    for (i = macros_map.begin(); i != macros_map.end(); i++) {
-        size_t pos = 0;
-        while((pos = src.find((i->first), pos)) != std::string::npos) {
-            src.replace(pos, (i->first).length(), (i->second));
-            pos += (i->first).length();
+void Compiler::expand_macros(vector<Token> &tokens) {
+    map<string, vector<Token>>::iterator map_iterator;
+    vector<Token>::iterator token_iterator = tokens.begin();
+    do {
+        if (token_iterator->type != TokenType::MACRO) {
+            token_iterator++;
+            continue;
+        }
+        for (map_iterator = macros_map.begin(); map_iterator != macros_map.end(); map_iterator++) {
+            if ("&" + map_iterator->first == token_iterator->val) {
+                tokens.erase(token_iterator);
+                vector<Token> replace = map_iterator->second;
+                for (Token tk : replace) {
+                    tokens.insert(token_iterator, tk);
+                    token_iterator = next(token_iterator);
+                }
+            }
+        }
+    } while (token_iterator != tokens.end());
+}
+
+void Compiler::extract_macros() {
+    vector<string> strs = split_lines(src);
+    for (string str : strs) {
+        auto words = split_space(str);
+        if (words[0] == "#MACRO") {
+            string key = words[1];
+            words.erase(words.begin());
+            words.erase(words.begin());
+
+            macros_map[key] = vector<Token>();
+            for (string word : words) {
+                macros_map[key].push_back(Tokenize(word, key)[0]);
+            }
         }
     }
 }
 
-vector<Token> Compiler::Tokenize() {
-    vector<Token> output = vector<Token>();
-    vector<string> strs = split(src);
+void Compiler::remove_directives() {
+    vector<string> strs = split_lines(src);
+    vector<string>::iterator i;
+    for (i = strs.begin(); i != strs.end(); i++) {
+        if (i->substr(0, 2) == "//" || i->substr(0, 1) == "#") {
+            strs.erase(i);
+            i--;
+        }
+    }
+    src = "";
     for (string str : strs) {
-        transform(str.begin(), str.end(), str.begin(), ::tolower);
+        src += str + "\n";
+    }
+}
+
+vector<Token> Compiler::Tokenize(string src, string macro_id) {
+    vector<Token> output = vector<Token>();
+    vector<string> strs = split_space(src);
+    for (string str : strs) {
         TokenType tktpe = match(str);
-        Token tk = Token{tktpe, str};
+        Token tk = Token{tktpe, str, macro_id};
         output.push_back(tk);
     }
     return output;
@@ -164,4 +225,5 @@ TokenType Compiler::match(string str) {
         }
     }
     FAIL << "Unrecognised token: " << str;
+    return TokenType::INVALID;
 }

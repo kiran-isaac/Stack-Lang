@@ -26,9 +26,27 @@ void print(Stack* stack) {
 }
 
 void add(Stack* stack) {
-    float op1 = stack->pop("[Inbuilt Function : add] Cannot pop parameter 0: operand")->number;
-    float op2 = stack->pop("[Inbuilt Function : add] Cannot pop parameter 1: operand")->number;
+    float op1 = stack->pop("[Inbuilt Function : +] Cannot pop parameter 0: operand")->number;
+    float op2 = stack->pop("[Inbuilt Function : +] Cannot pop parameter 1: operand")->number;
     stack->push(new NUMBER(op1 + op2));
+}
+
+void sub(Stack* stack) {
+    float op1 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 0: operand")->number;
+    float op2 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 1: operand")->number;
+    stack->push(new NUMBER(op2 - op1));
+}
+
+void mul(Stack* stack) {
+    float op1 = stack->pop("[Inbuilt Function : *] Cannot pop parameter 0: operand")->number;
+    float op2 = stack->pop("[Inbuilt Function : *] Cannot pop parameter 1: operand")->number;
+    stack->push(new NUMBER(op2 * op1));
+}
+
+void div(Stack* stack) {
+    float op1 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 0: operand")->number;
+    float op2 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 1: operand")->number;
+    stack->push(new NUMBER(op2 / op1));
 }
 
 void exit(Stack* stack) {
@@ -37,7 +55,10 @@ void exit(Stack* stack) {
 }
 
 void init_inbuilts() {
-    funcMap["print"] = &print;
-    funcMap["exit"] = &exit;
-    funcMap["add"] = &add;
+    funcMap["print"]    = &print;
+    funcMap["exit"]     = &exit;
+    funcMap["add"]      = &add;
+    funcMap["sub"]      = &sub;
+    funcMap["mul"]      = &mul;
+    funcMap["div"]      = &div;
 }

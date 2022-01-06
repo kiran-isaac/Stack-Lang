@@ -9,11 +9,15 @@ enum TokenType {
     KW_INBUILT,
     ID,
     NUM_LIT,
+    MACRO,
+
+    INVALID
 };
 
 struct Token {
     TokenType type;
     std::string val;
+    std::string macro;
 };
 
 #endif
