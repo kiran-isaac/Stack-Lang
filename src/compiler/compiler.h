@@ -44,6 +44,7 @@ public:
     void remove_directives();
     void expand_macros(std::vector<Token> &tokens);
     void extract_macros();
+    int get_macro_length(std::vector<Token> tokens);
     std::vector<Token> Tokenize(std::string, std::string = "");
 
     std::vector<Value> constants;

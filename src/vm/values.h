@@ -1,17 +1,15 @@
 #ifndef VALUE_H
 #define VALUE_H
 
-enum class ValueType {
-    FLOAT,
-    INT,
-    POINTER
-};
+#include "../datatypes.h"
 
 struct Value {
-    ValueType type;
-    float number;
+    int type;
+    float f;
+    char c;
 };
 
-#define NUMBER(value) Value{ValueType::FLOAT, value}
+#define NUMBER(value) Value{DT_NUM, value}
+#define CHAR(value) Value{DT_CHAR, 0, value}
 
 #endif

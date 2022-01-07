@@ -20,8 +20,6 @@
 // 10kB
 #define BUFFER_SIZE 1024 * 10
 
-#define READ_BYTE() *ip++
-#define READ_BYTES(n) {for (int i = 0; i < n; i++) {READ_BYTE();}}
 #define GET_CONSTANT() constants[GET_WORD()]
 
 class BaskVM

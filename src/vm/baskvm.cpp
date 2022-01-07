@@ -19,66 +19,63 @@ void BaskVM::load(char* fname) {
 }
 
 void BaskVM::exec() {
-    // code = {
-    //          // 2 constants
-    //     0x00,
-    //     0x00,
-    //     0x00,
-    //     0x02,
+    code = {
+             // 2 constants
+        0x00,
+        0x00,
+        0x00,
+        0x02,
 
-    //          // Const 1
-    //     0x00,
-    //     0x42,
-    //     0xc8,
-    //     0x33,
-    //     0x33,
+             // Const 1
+        0x00,
+        0x42,
+        0xc8,
+        0x33,
+        0x33,
 
-    //          // Const 2
-    //     0x00,
-    //     0x80,
-    //     0x00,
-    //     0x00,
-    //     0x00,
+             // Const 2
+        0x01,
+        65,
 
-    //          // Push const 0
-    //     0x01,
-    //     0x00,
-    //     0x00,
-    //     0x00,
-    //     0x00,
+             // Push const 0
+        0x01,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
 
-    //          // Push const 1
-    //     0x01,
-    //     0x00,
-    //     0x00,
-    //     0x00,
-    //     0x01,
+             // Push const 1
+        0x01,
+        0x00,
+        0x00,
+        0x00,
+        0x01,
 
-    //     0x02,
-    //     0x00,
-    //          // Func name
-    //     0x70
-    //     0x72 
-    //     0x69 
-    //     0x6E 
-    //     0x74
-    //     0x00,
-    //          // Push const 1
-    //     0x01,
-    //     0x00,
-    //     0x00,
-    //     0x00,
-    //     0x00,
-    //
-    //     0x02,
-    //     0x00,
-    //          // Func name
-    //     0x65 
-    //     0x78 
-    //     0x69 
-    //     0x74
-    //     0x00
-    // };
+        0x02,
+        0x00,
+             // Func name
+        0x70,
+        0x72,
+        0x69,
+        0x6E,
+        0x74,
+        0x00,
+             // Push const 1
+        0x01,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+    
+        0x02,
+        0x00,
+             // Func name
+        0x65, 
+        0x78, 
+        0x69, 
+        0x74,
+        0x00
+    };
 
     ip = &code[0];
 
@@ -91,10 +88,18 @@ void BaskVM::read_const() {
     for (int i = 0; i < const_num; i++) {
         switch (READ_BYTE()) {
             case DT_NUM:
-                uint32_t value = GET_WORD();
-                float f;
-                memcpy(&f, &value, 4);
-                constants.push_back(new NUMBER(f));
+                {
+                    uint32_t value = GET_WORD();
+                    float f;
+                    memcpy(&f, &value, 4);
+                    constants.push_back(new NUMBER(f));
+                }
+                break;
+            case DT_CHAR:
+                {
+                    char value = (char)READ_BYTE();
+                    constants.push_back(new CHAR(value));
+                }
                 break;
         }
     }

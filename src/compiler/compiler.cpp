@@ -34,15 +34,15 @@ Compiler::Compiler(char* fname) {
 
     token_map2["^[A-Za-z_]+$"] = TokenType::ID;
 
-    ADD_INBUILT_MACRO("+", "add");
-    ADD_INBUILT_MACRO("*", "mul");
-    ADD_INBUILT_MACRO("-", "sub");
-    ADD_INBUILT_MACRO("/", "div");
-    ADD_INBUILT_MACRO("print", "print");
-    ADD_INBUILT_MACRO("exit", "exit");
+    ADD_INBUILT_MACRO("&+", "add");
+    ADD_INBUILT_MACRO("&*", "mul");
+    ADD_INBUILT_MACRO("&-", "sub");
+    ADD_INBUILT_MACRO("&/", "div");
+    ADD_INBUILT_MACRO("&print", "print");
+    ADD_INBUILT_MACRO("&exit", "exit");
 
-    macros_map["num"] = vector<Token>();
-    macros_map["num"].push_back(Token{TokenType::NUM_LIT, "0", "num"});
+    macros_map["&num"] = vector<Token>();
+    macros_map["&num"].push_back(Token{TokenType::NUM_LIT, "0", "num"});
 }
 
 
@@ -75,7 +75,6 @@ void Compiler::compile() {
     extract_macros();
     remove_directives();
     vector<Token> tokens = Tokenize(this->src);
-    tokens.reserve(100000);
     expand_macros(tokens);
     vector<BYTE> out = vector<BYTE>();
     int i = 0;
@@ -146,7 +145,25 @@ void Compiler::compile() {
     fout.close();
 }
 
+
+
+int Compiler::get_macro_length(vector<Token> tokens) {
+    int size = tokens.size();
+    vector<Token>::iterator token_iterator = tokens.begin();
+    do {
+        if (token_iterator->type != TokenType::MACRO) {
+            token_iterator++;
+            continue;
+        }
+        size += get_macro_length(macros_map[token_iterator->val]) - 1;
+        token_iterator++;  
+    } while (token_iterator != tokens.end());
+    return size;
+}
+
 void Compiler::expand_macros(vector<Token> &tokens) {
+    int x = get_macro_length(tokens);
+    tokens.reserve(x);
     map<string, vector<Token>>::iterator map_iterator;
     vector<Token>::iterator token_iterator = tokens.begin();
     do {
@@ -155,13 +172,14 @@ void Compiler::expand_macros(vector<Token> &tokens) {
             continue;
         }
         for (map_iterator = macros_map.begin(); map_iterator != macros_map.end(); map_iterator++) {
-            if ("&" + map_iterator->first == token_iterator->val) {
+            if (map_iterator->first == token_iterator->val) {
                 tokens.erase(token_iterator);
                 vector<Token> replace = map_iterator->second;
                 for (Token tk : replace) {
                     tokens.insert(token_iterator, tk);
                     token_iterator = next(token_iterator);
                 }
+                token_iterator = tokens.begin();
             }
         }
     } while (token_iterator != tokens.end());
@@ -172,7 +190,7 @@ void Compiler::extract_macros() {
     for (string str : strs) {
         auto words = split_space(str);
         if (words[0] == "#MACRO") {
-            string key = words[1];
+            string key = "&" + words[1];
             words.erase(words.begin());
             words.erase(words.begin());
 
@@ -180,6 +198,7 @@ void Compiler::extract_macros() {
             for (string word : words) {
                 macros_map[key].push_back(Tokenize(word, key)[0]);
             }
+            expand_macros(macros_map[key]);
         }
     }
 }

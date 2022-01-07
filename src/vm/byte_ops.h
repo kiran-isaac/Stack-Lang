@@ -9,6 +9,7 @@ typedef uint8_t BYTE;
 typedef uint32_t WORD;
 
 #define READ_BYTE() *ip++
+#define READ_BYTES(n) {for (int i = 0; i < n; i++) {READ_BYTE();}}
 #define GET_WORD() COMBINE_4_BYTES(READ_BYTE(), READ_BYTE(), READ_BYTE(), READ_BYTE())
 
 #define COMBINE_2_BYTES(a, b) ((uint16_t)a << 8) | b

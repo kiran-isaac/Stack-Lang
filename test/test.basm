@@ -1,1 +1,6 @@
-2 3 &* &num &print 2 3 &* &num &print 0 &exit
+#MACRO test2 1 2 &+
+#MACRO test &test2 4 &/
+
+&test
+&num 
+&print
