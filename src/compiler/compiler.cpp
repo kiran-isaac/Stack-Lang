@@ -154,7 +154,7 @@ void Compiler::compile() {
                 break;
             case TokenType::LABEL: 
                 {
-                    labels[tk.val.substr(0, tk.val.size() - 1)] = i;
+                    labels[tk.val.substr(0, tk.val.size() - 1)] = out.size();
                     i++;
                 }
                 break;

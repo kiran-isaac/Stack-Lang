@@ -1,7 +1,7 @@
 &cs x 0
 &cs y 1
 &cs z 0
-&cs n 1000000
+&cs n 100000
 
 loop: &sd copy n copy x > branch endloop
     copy z &num :print &newline

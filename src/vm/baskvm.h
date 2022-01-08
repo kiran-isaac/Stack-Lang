@@ -34,8 +34,10 @@ public:
     void read_label();
     void eval();
 
-    BYTE* ip;
-    BYTE* code_start;
+    BYTE read_byte();
+
+    WORD ip;
+    WORD code_start;
     std::map<std::string, uint64_t>* labels;
     Stack* default_stack;
     Stack* current_stack;

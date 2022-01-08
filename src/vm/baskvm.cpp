@@ -2,6 +2,11 @@
 
 using namespace std;
 
+BYTE BaskVM::read_byte() {
+    ip++;
+    return code[ip - 1];
+}
+
 BaskVM::BaskVM() {
     labels = new map<string, WORD>;
     default_stack = new Stack("default");
@@ -111,7 +116,7 @@ void BaskVM::exec() {
     //     'm', 'a', 'i', 'n', 0x00,
     // };
 
-    ip = &code[0];
+    ip = 0;
 
     read_const();
     read_label();
@@ -123,7 +128,7 @@ void BaskVM::exec() {
 void BaskVM::read_const() {
     WORD const_num = GET_WORD();
     for (int i = 0; i < const_num; i++) {
-        switch (READ_BYTE()) {
+        switch (read_byte()) {
             case DT_NUM:
                 {
                     WORD value = GET_WORD();
@@ -132,7 +137,7 @@ void BaskVM::read_const() {
                 break;
             case DT_CHAR:
                 {
-                    char value = (char)READ_BYTE();
+                    char value = (char)read_byte();
                     constants.push_back(new CHAR(value));
                 }
                 break;
@@ -156,7 +161,7 @@ string BaskVM::read_string() {
     BYTE byte;
     vector<BYTE> bytes;
     do {
-        byte = READ_BYTE();
+        byte = read_byte();
         bytes.push_back(byte);
     } while (byte != 0x00);
     bytes.pop_back();
@@ -167,7 +172,7 @@ void BaskVM::eval()
 {
     while (true)
     {
-        auto opcode = READ_BYTE();
+        auto opcode = read_byte();
         switch (opcode)
         {
         case OP_HALT:
@@ -214,7 +219,7 @@ void BaskVM::eval()
             }
             break;
         case OP_FUNC_CALL:
-            switch (READ_BYTE())
+            switch (read_byte())
             {
             case FUNC_CALL_MODE_INBUILT:
                 call_inbuilt(read_string(), current_stack);
