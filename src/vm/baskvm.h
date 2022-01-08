@@ -10,11 +10,11 @@
 #include <iterator>
 #include <fstream>
 #include "../datatypes.h"
-#include "byte_ops.h"
+#include "../byte_ops.h"
 #include "../opcode.h"
 #include "stack.h"
 #include "logger.h"
-#include "values.h"
+#include "../values.h"
 #include "inbuilt.h"
 
 // 10kB
@@ -27,6 +27,8 @@ class BaskVM
 public:
     BaskVM();
 
+    std::string read_string();
+
     void load(char* fname);
 
     void exec();
@@ -36,7 +38,9 @@ public:
     void eval();
 
     BYTE *ip;
-    Stack* stack;
+    Stack* default_stack;
+    Stack* current_stack;
+    std::map<std::string, Stack*>* symbol_table;
 
     std::vector<Value *> constants;
     std::vector<BYTE> code;

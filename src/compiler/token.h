@@ -7,9 +7,15 @@ enum TokenType {
     KW_PUSH,
     KW_CALL,
     KW_INBUILT,
+    KW_SWITCH,
+    KW_CREATE,
+    
     ID,
     NUM_LIT,
+    CHAR_LIT,
+    STRING_LIT,
     MACRO,
+    MACRO_LINE_ROLLOVER,
 
     INVALID
 };

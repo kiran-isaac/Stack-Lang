@@ -13,6 +13,6 @@ int main(int argc, char *argv[]) {
             BaskVM vm = BaskVM();
             vm.load(argv[2]);
             vm.exec();
-        } 
+        }
     }
 }

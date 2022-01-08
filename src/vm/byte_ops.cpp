@@ -1,9 +1,25 @@
-#include "byte_ops.h"
+#include "../byte_ops.h"
 
-std::string bytes_to_string(std::vector<uint8_t> string) {
-    std::ostringstream convert;
+using namespace std;
+
+string bytes_to_string(vector<uint8_t> string) {
+    ostringstream convert;
     for (uint8_t chr : string) {
         convert << (char)chr;
     }
     return convert.str();
+}
+
+WORD float_to_word(float f) {
+    WORD word;
+    memcpy(&word, &f, 4);
+    
+    return word;
+}
+
+WORD char_to_word(char c) {
+    BYTE byte = (BYTE)c;
+    WORD word = 0;
+    
+    return word + byte;
 }

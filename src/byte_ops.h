@@ -4,6 +4,7 @@
 #include <sstream>
 #include <vector>
 #include <iostream> 
+#include <string.h>
 
 typedef uint8_t BYTE;
 typedef uint32_t WORD;
@@ -14,6 +15,9 @@ typedef uint32_t WORD;
 
 #define COMBINE_2_BYTES(a, b) ((uint16_t)a << 8) | b
 #define COMBINE_4_BYTES(a, b, c, d) (WORD)a << 24 | (WORD)b << 16 | (WORD)c << 8 | (WORD)d
+
+WORD float_to_word(float f);
+WORD char_to_word(char c);
 
 std::string bytes_to_string(std::vector<uint8_t> string);
 

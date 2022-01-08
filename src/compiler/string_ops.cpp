@@ -6,9 +6,13 @@ vector<string> split_space(std::string str)
 {
     auto out = vector<string>();
     string current;
+    bool instring;
 
     for (char chr : str) {
-        if (isspace(chr)) {
+        if (chr == '"') {
+            instring = !instring;
+        }
+        if (isspace(chr) && !instring) {
             if (current.size() != 0) {
                 out.push_back(current);
             }

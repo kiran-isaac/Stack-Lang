@@ -1,6 +1,2 @@
-#MACRO test2 1 2 &+
-#MACRO test &test2 4 &/
-
-&test
-&num 
-&print
+0 1 0
+1 +

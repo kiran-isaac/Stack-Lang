@@ -11,10 +11,9 @@
 #include <locale>
 #include <regex>
 #include "token.h"
-#include "values.h"
+#include "../values.h"
 #include "logger.h"
 #include "../opcode.h"
-#include "../datatypes.h"
 #include "string_ops.h"
 
 // 10kB
@@ -22,12 +21,16 @@
 
 #define ADD(b) out.push_back(b);
 #define ADD_WORD(w) {BYTE *byte = (BYTE*)&w; ADD(byte[3]); ADD(byte[2]); ADD(byte[1]); ADD(byte[0]);}
-#define MACRO_ERROR(tk) (tk.macro != "") ? " (expanded from macro: &" + tk.macro + ")" : ""
+#define MACRO_ERROR(tk) (tk.macro != "") ? " (expanded from macro: " + tk.macro + ")" : ""
 
-#define ADD_INBUILT_MACRO(alias, macro) {macros_map[alias] = vector<Token>(); \
-    macros_map[alias].push_back(Token{TokenType::KW_CALL, "CALL", macro}); \
-    macros_map[alias].push_back(Token{TokenType::KW_INBUILT, "INBUILT", macro}); \
-    macros_map[alias].push_back(Token{TokenType::ID, macro, macro});}
+#define ADD_INBUILT_MACRO(alias, macro) {macros_map[alias] = vector<Token>();ADD_MACRO(alias, (string)"CALL INBUILT " + macro)}
+
+#define ADD_DATATYPE_MACRO(alias, value) {macros_map[alias] = vector<Token>();\
+    macros_map[alias].push_back(Token{TokenType::NUM_LIT, value, alias});}
+#define ADD_MACRO(alias, value) {macros_map[alias] = vector<Token>();\
+    for (Token tk : Tokenize(value)) {\
+        macros_map[alias].push_back(tk);\
+    }}
 
 #define WHTIESPACE_CHARS() 
 
@@ -44,6 +47,8 @@ public:
     void remove_directives();
     void expand_macros(std::vector<Token> &tokens);
     void extract_macros();
+    void expand_strings(std::vector<Token> &tokens);
+    void add_exit(std::vector<Token> &tokens);
     int get_macro_length(std::vector<Token> tokens);
     std::vector<Token> Tokenize(std::string, std::string = "");
 
