@@ -27,31 +27,30 @@ Compiler::Compiler(char* fname) {
     constants = vector<Value>();
 
     token_map1[keyword("inbuilt")] = TokenType::KW_INBUILT;
-    token_map1[keyword("call")] = TokenType::KW_CALL;
     token_map1[keyword("push")] = TokenType::KW_PUSH;
     token_map1[keyword("switch")] = TokenType::KW_SWITCH;
     token_map1[keyword("create")] = TokenType::KW_CREATE;
     token_map1[keyword("bring")] = TokenType::KW_BRING;
     token_map1[keyword("copy")] = TokenType::KW_COPY;
+    token_map1["^[A-Za-z_]*:[A-Za-z_]+"] = TokenType::FUNC_CALL;
+    token_map1["^[A-Za-z_]+:"] = TokenType::FUNC_CALL;
     token_map1["^->$"] = TokenType::MACRO_LINE_ROLLOVER;
-    token_map1["^(&\\S+$|\\+|/|\\*)$"] = TokenType::MACRO;
+    token_map1["^\\[$"] = TokenType::REVERSE_START;
+    token_map1["^]$"] = TokenType::REVERSE_END;
+    token_map1["^(&\\S+$|\\+|/|\\*|-|\\^)$"] = TokenType::MACRO;
     token_map1["^'(\\S|\\\\\\S)'$"] = TokenType::CHAR_LIT;
     token_map1["^\".+\"$"] = TokenType::STRING_LIT;
     token_map1["^[-]?([0-9]*[.])?[0-9]+$"] = TokenType::NUM_LIT;
 
     token_map2["^[A-Za-z_]+$"] = TokenType::ID;
 
-    ADD_INBUILT_MACRO("+", "add");
-    ADD_INBUILT_MACRO("*", "mul");
-    ADD_INBUILT_MACRO("-", "sub");
-    ADD_INBUILT_MACRO("/", "div");
-    ADD_INBUILT_MACRO("&print", "print");
-    ADD_INBUILT_MACRO("&reverse", "reverse");
-    ADD_INBUILT_MACRO("&stack_len", "stack_len");
-    ADD_INBUILT_MACRO("&stackID", "stackID");
-    ADD_INBUILT_MACRO("&exit", "exit");
+    ADD_MACRO("+", ":add");
+    ADD_MACRO("*", ":mul");
+    ADD_MACRO("-", ":sub");
+    ADD_MACRO("/", ":div");
+    ADD_MACRO("^", ":pow");
     
-    ADD_MACRO("&newline", "'\\n' &char &print");
+    ADD_MACRO("&newline", "'\\n' &char :print");
     ADD_MACRO("&cs", "CREATE SWITCH");
     ADD_MACRO("&c", "CREATE");
     ADD_MACRO("&s", "SWITCH");
@@ -67,7 +66,7 @@ WORD Compiler::add_constant(Value val) {
         switch (val.type)
         {
         case DT_NUM:
-            if (constants[i].f() == val.f() && constants[i].type == val.type) {
+            if (constants[i].d() == val.d() && constants[i].type == val.type) {
                 return i;
             }
             break;
@@ -83,15 +82,14 @@ WORD Compiler::add_constant(Value val) {
 
 vector<BYTE> Compiler::get_constants() {
     vector<BYTE> out = vector<BYTE>();
-    uint32_t size = constants.size();
+    uint64_t size = constants.size();
     ADD_WORD(size);
     for (Value val : constants) {
         if (val.type == DT_NUM) {
             ADD(DT_NUM);
-            float f = val.f();
-            WORD word = *((WORD*)(&f));
-            BYTE *byte = (BYTE*)&word;
-            ADD(byte[3]); ADD(byte[2]); ADD(byte[1]); ADD(byte[0]);
+            double d = val.d();
+            WORD word = *((WORD*)(&d));
+            ADD_WORD(word)
         }
         if (val.type == DT_CHAR) {
             ADD(DT_CHAR);
@@ -108,7 +106,8 @@ void Compiler::compile() {
     tokens.reserve(get_macro_length(tokens) + 5);
     expand_strings(tokens);
     expand_macros(tokens);
-    add_exit(tokens);
+    reverse(tokens);
+    // add_exit(tokens);
     vector<BYTE> out = vector<BYTE>();
     int i = 0;
     while (i < tokens.size()) {
@@ -132,28 +131,21 @@ void Compiler::compile() {
                     i += 1;
                 }
                 break;
-            case TokenType::KW_CALL:
+            case TokenType::FUNC_CALL:
                 {
-                    Token tk2 = tokens[i+1];
-                    Token tk3 = tokens[i+2];
+                    string call = tk.val;
                     ADD(OP_FUNC_CALL);
-                    switch (tk2.type) {
-                        case KW_INBUILT:
-                            ADD(FUNC_CALL_MODE_INBUILT);
-                            if (tk3.type != TokenType::ID) {
-                                string macro_error = MACRO_ERROR(tk3);
-                                FAIL << "Invalid inbuilt name: " << tk3.val << macro_error;
-                            }
-                            for (char chr : tk3.val) {
-                                ADD((uint8_t)chr);
-                            }
-                            // Null Termination
-                            ADD(0x00);
-                            i += 3;
-                            break;
-                        default:
-                            FAIL << "Invalid call scope: " << tk2.val << MACRO_ERROR(tk2);
+                    if (call.find(":") == 0) {
+                        ADD(FUNC_CALL_MODE_INBUILT);
+                        call = call.substr(1, call.size() - 1);
                     }
+                    
+                    for (char chr : call) {
+                        ADD((uint8_t)chr);
+                    }
+                    // Null Termination
+                    ADD(0x00);
+                    i += 1;
                     break;
                 }
             case TokenType::KW_SWITCH:
@@ -225,7 +217,7 @@ void Compiler::compile() {
             case TokenType::MACRO:
                 FAIL << "Cannot expand macro: " << tk.val;
             default:
-                FAIL << "Invalid Token: " << tk.val << MACRO_ERROR(tk);
+                FAIL << "Invalid Token in code generation: " << tk.val << MACRO_ERROR(tk);
         }
     }
 
@@ -294,9 +286,9 @@ void Compiler::extract_macros() {
     string rollover = "";
     for (string str : strs) {
         auto words = split_space(str);
-        if (words[0] == "#MACRO" || rollover != "") {
+        std::transform(words[0].begin(), words[0].end(), words[0].begin(), ::tolower);
+        if (words[0] == "#macro" || rollover != "") {
             string key; 
-            
             if (rollover != "") {
                 key = rollover;
             } else {
@@ -326,7 +318,7 @@ void Compiler::extract_macros() {
 }
 
 void Compiler::expand_strings(vector<Token> &tokens) {
-    for (vector<Token> ::iterator token_iterator = tokens.begin(); token_iterator != tokens.end(); token_iterator++) {
+    for (vector<Token> ::iterator token_iterator = tokens.begin(); token_iterator != tokens.end() + 1; token_iterator++) {
         if (token_iterator->type == TokenType::STRING_LIT) {
             string str = token_iterator->val.substr(1, token_iterator->val.size() - 2) + (char)0x00;
             std::reverse(str.begin(), str.end());
@@ -347,10 +339,46 @@ void Compiler::expand_strings(vector<Token> &tokens) {
     }
 }
 
+void Compiler::reverse(std::vector<Token> &tokens) {
+    bool reverse = false;
+    for (vector<Token> ::iterator token_iterator = tokens.begin(); token_iterator != tokens.end() + 1; token_iterator++) {
+        if (token_iterator->type == TokenType::REVERSE_START) {
+            reverse = true;
+            tokens.erase(token_iterator);
+            token_iterator--;
+        } else if (token_iterator->type == TokenType::REVERSE_END) {
+            reverse = false;
+            tokens.erase(token_iterator);
+            token_iterator--;
+        } else {
+            token_iterator->reverse = reverse;
+        }
+    }
+
+    vector<Token>::iterator reverse_start;
+    vector<Token>::iterator reverse_end;
+    reverse = false;
+    for (vector<Token> ::iterator token_iterator = tokens.begin(); token_iterator != tokens.end() + 1; token_iterator++) {
+        if (!reverse) {
+            if (token_iterator->reverse) 
+            {
+                reverse_start = token_iterator; 
+                reverse = true;
+            }
+        } else {
+            if (!token_iterator->reverse) {
+                reverse_end = token_iterator;
+                std::reverse(reverse_start, reverse_end);
+                reverse = false;
+            }
+        }
+    }
+}
+
 void Compiler::add_exit(vector<Token> &tokens) {
     bool exit = false;
     for (vector<Token> ::iterator token_iterator = tokens.begin(); token_iterator != tokens.end(); token_iterator++) {
-        if (token_iterator->type == TokenType::KW_CALL && (token_iterator + 1)->type == TokenType::KW_INBUILT 
+        if (token_iterator->type == TokenType::FUNC_CALL && (token_iterator + 1)->type == TokenType::KW_INBUILT 
         && (token_iterator+2)->val == "exit") {
             exit = true;
         }
@@ -358,9 +386,7 @@ void Compiler::add_exit(vector<Token> &tokens) {
 
     if (!exit) {
         tokens.push_back(Token{NUM_LIT, "0", "auto added exit"});
-        tokens.push_back(Token{KW_CALL, "call", "auto added exit"});
-        tokens.push_back(Token{KW_INBUILT, "inbuilt", "auto added exit"});
-        tokens.push_back(Token{ID, "exit", "auto added exit"});
+        tokens.push_back(Token{FUNC_CALL, ":exit", "auto added exit"});
     }
 }
 

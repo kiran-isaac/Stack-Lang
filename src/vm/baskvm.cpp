@@ -121,7 +121,7 @@ void BaskVM::read_const() {
         switch (READ_BYTE()) {
             case DT_NUM:
                 {
-                    uint32_t value = GET_WORD();
+                    WORD value = GET_WORD();
                     constants.push_back(new Value({DT_NUM, value}));
                 }
                 break;

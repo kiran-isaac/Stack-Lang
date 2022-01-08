@@ -5,19 +5,25 @@
 
 enum TokenType {
     KW_PUSH,
-    KW_CALL,
     KW_INBUILT,
     KW_SWITCH,
     KW_CREATE,
     KW_BRING,
     KW_COPY,
+
+    REVERSE_START,
+    REVERSE_END,
+
+    LABEL,
+    FUNC_CALL,
     
     ID,
+    MACRO,
+    MACRO_LINE_ROLLOVER,
+
     NUM_LIT,
     CHAR_LIT,
     STRING_LIT,
-    MACRO,
-    MACRO_LINE_ROLLOVER,
 
     INVALID
 };
@@ -26,6 +32,7 @@ struct Token {
     TokenType type;
     std::string val;
     std::string macro;
+    bool reverse;
 };
 
 #endif

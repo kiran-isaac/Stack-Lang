@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <map>
+#include <cmath>
 #include "values.h"
 #include "stack.h"
 #include "../byte_ops.h"

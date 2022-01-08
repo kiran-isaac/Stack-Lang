@@ -36,10 +36,10 @@ void StackID(Stack* stack) {
 }
 
 void print(Stack* stack) {
-    uint32_t mode = stack->pop("[Inbuilt Function : print] Cannot pop parameter 0: print datatype")->f();
+    uint32_t mode = stack->pop("[Inbuilt Function : print] Cannot pop parameter 0: print datatype")->d();
     switch (mode) {
         case DT_NUM:
-            cout << stack->pop("[Inbuilt Function : print] Cannot pop parameter 1: print value")->f();
+            cout << stack->pop("[Inbuilt Function : print] Cannot pop parameter 1: print value")->d();
             break;
         case DT_CHAR:
             cout << stack->pop("[Inbuilt Function : print] Cannot pop parameter 1: print value")->c();
@@ -70,31 +70,37 @@ void str_concat(Stack* stack) {
 }
 
 void add(Stack* stack) {
-    float op1 = stack->pop("[Inbuilt Function : +] Cannot pop parameter 0: operand")->f();
-    float op2 = stack->pop("[Inbuilt Function : +] Cannot pop parameter 1: operand")->f();
+    float op1 = stack->pop("[Inbuilt Function : +] Cannot pop parameter 0: operand")->d();
+    float op2 = stack->pop("[Inbuilt Function : +] Cannot pop parameter 1: operand")->d();
     stack->push(new NUMBER(op1 + op2));
 }
 
 void sub(Stack* stack) {
-    float op1 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 0: operand")->f();
-    float op2 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 1: operand")->f();
+    float op1 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 0: operand")->d();
+    float op2 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 1: operand")->d();
     stack->push(new NUMBER(op2 - op1));
 }
 
 void mul(Stack* stack) {
-    float op1 = stack->pop("[Inbuilt Function : *] Cannot pop parameter 0: operand")->f();
-    float op2 = stack->pop("[Inbuilt Function : *] Cannot pop parameter 1: operand")->f();
+    float op1 = stack->pop("[Inbuilt Function : *] Cannot pop parameter 0: operand")->d();
+    float op2 = stack->pop("[Inbuilt Function : *] Cannot pop parameter 1: operand")->d();
     stack->push(new NUMBER(op2 * op1));
 }
 
 void div(Stack* stack) {
-    float op1 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 0: operand")->f();
-    float op2 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 1: operand")->f();
+    float op1 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 0: operand")->d();
+    float op2 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 1: operand")->d();
     stack->push(new NUMBER(op2 / op1));
 }
 
+void pow(Stack* stack) {
+    float op1 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 0: operand")->d();
+    float op2 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 1: operand")->d();
+    stack->push(new NUMBER((float)pow(op2, op1)));
+}
+
 void exit(Stack* stack) {
-    uint32_t code = stack->pop("[Inbuilt Function : exit] Cannot pop parameter 0: exit code")->f();
+    uint32_t code = stack->pop("[Inbuilt Function : exit] Cannot pop parameter 0: exit code")->d();
     cout << "Exited with code: " << code << endl;
     if (stack->size() != 0) {
         cout << "Exiting with non empty stack " << stack->name << endl;
@@ -109,6 +115,7 @@ void init_inbuilts() {
     funcMap["sub"]        = &sub;
     funcMap["mul"]        = &mul;
     funcMap["div"]        = &div;
+    funcMap["pow"]        = &pow;
     funcMap["stack_len"]  = &stack_len;
     funcMap["reverse"]    = &reverse;
     funcMap["stackID"]    = &StackID;

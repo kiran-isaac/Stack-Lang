@@ -11,6 +11,16 @@ vector<string> split_space(std::string str)
     for (char chr : str) {
         if (chr == '"') {
             instring = !instring;
+        } else if (chr == '[' || chr == ']') {
+            if (current.size() != 0) {
+                out.push_back(current);
+            }
+
+            current = "";
+            current += chr;
+            out.push_back(current);
+            current = "";
+            continue;
         }
         if (isspace(chr) && !instring) {
             if (current.size() != 0) {

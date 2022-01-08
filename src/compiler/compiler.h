@@ -20,7 +20,8 @@
 #define BUFFER_SIZE 1024 * 10
 
 #define ADD(b) out.push_back(b);
-#define ADD_WORD(w) {BYTE *byte = (BYTE*)&w; ADD(byte[3]); ADD(byte[2]); ADD(byte[1]); ADD(byte[0]);}
+#define ADD_WORD(w) {BYTE *byte = (BYTE*)&w; ADD(byte[7]); ADD(byte[6]); ADD(byte[5]); ADD(byte[4]);\
+            ADD(byte[3]); ADD(byte[2]); ADD(byte[1]); ADD(byte[0]);}
 #define MACRO_ERROR(tk) (tk.macro != "") ? " (expanded from macro: " + tk.macro + ")" : ""
 
 #define ADD_INBUILT_MACRO(alias, macro) {macros_map[alias] = vector<Token>();ADD_MACRO(alias, (string)"CALL INBUILT " + macro)}
@@ -35,7 +36,7 @@
 #define WHTIESPACE_CHARS() 
 
 typedef uint8_t BYTE;
-typedef uint32_t WORD;
+typedef uint64_t WORD;
 
 class Compiler {
 public:
@@ -49,6 +50,7 @@ public:
     void extract_macros();
     void expand_strings(std::vector<Token> &tokens);
     void add_exit(std::vector<Token> &tokens);
+    void reverse(std::vector<Token> &tokens);
     int get_macro_length(std::vector<Token> tokens);
     std::vector<Token> Tokenize(std::string, std::string = "");
 
