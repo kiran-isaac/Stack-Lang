@@ -27,6 +27,10 @@
 
 #define OP_POP 0x09
 
+#define OP_DUP 0x0A
+
+#define OP_NOOP 0x0B
+
 #define SWITCH_MODE_DEFAULT 0x00
 #define SWITCH_MODE_IDENTIFIER 0x01
 

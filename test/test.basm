@@ -1,11 +1,14 @@
 &cs x 0
 &cs y 1
 &cs z 0
-&cs n 1000000
+&cs i 0
+&cs n 145
 
-loop: &sd copy n copy x > branch endloop
+loop: &sd copy n copy i > branch endloop
+    &s i dup &num :print [+ 1] NOOP
+    [' ' ':' ' ' 0] &string :print
     copy z &num :print &newline
-    &s z pop copy y pop
+    &s z pop copy y
     &s y copy x +
     &s x pop copy z
     goto loop

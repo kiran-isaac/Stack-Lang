@@ -35,13 +35,15 @@ Compiler::Compiler(char* fname) {
     token_map1[keyword("goto")] = TokenType::KW_GOTO;
     token_map1[keyword("branch")] = TokenType::KW_BRANCH;
     token_map1[keyword("pop")] = TokenType::KW_POP;
+    token_map1[keyword("dup")] = TokenType::KW_DUP;
+    token_map1[keyword("noop")] = TokenType::KW_NOOP;
     token_map1["^[A-Za-z_]*:[A-Za-z_]+"] = TokenType::FUNC_CALL;
     token_map1["^[A-Za-z_]+:"] = TokenType::LABEL;
     token_map1["^->$"] = TokenType::MACRO_LINE_ROLLOVER;
     token_map1["^\\[$"] = TokenType::REVERSE_START;
     token_map1["^]$"] = TokenType::REVERSE_END;
     token_map1["^(&\\S+$|\\+|/|\\*|-|\\^|==|<|>|<=|>=)$"] = TokenType::MACRO;
-    token_map1["^'(\\S|\\\\\\S)'$"] = TokenType::CHAR_LIT;
+    token_map1["^'(.|\\\\.)'$"] = TokenType::CHAR_LIT;
     token_map1["^\".+\"$"] = TokenType::STRING_LIT;
     token_map1["^[-]?([0-9]*[.])?[0-9]+$"] = TokenType::NUM_LIT;
 
@@ -135,6 +137,9 @@ void Compiler::compile() {
     while (i < tokens.size()) {
         Token tk = tokens[i];
         switch (tk.type) {
+            case TokenType::KW_NOOP:
+                i++;
+                break;
             case TokenType::NUM_LIT:
                 {
                     ADD(OP_CONST);
@@ -161,6 +166,10 @@ void Compiler::compile() {
                 break;
             case TokenType::KW_POP:
                 ADD(OP_POP);
+                i++;
+                break;
+            case TokenType::KW_DUP:
+                ADD(OP_DUP);
                 i++;
                 break;
             case KW_GOTO: case KW_BRANCH:
@@ -279,93 +288,6 @@ void Compiler::compile() {
         fout.write((char*)&byte, 1);
     }
     fout.close();
-}
-
-int Compiler::get_macro_length(vector<Token> tokens) {
-    int size = tokens.size();
-    vector<Token>::iterator token_iterator = tokens.begin();
-    do {
-        if (token_iterator->type == TokenType::STRING_LIT) {
-            size += token_iterator->val.size();
-            token_iterator ++;
-            continue;
-        } 
-        if (token_iterator->type != TokenType::MACRO) {
-            token_iterator++;
-            continue;
-        }
-        if (macros_map.find(token_iterator->val) == macros_map.end()) {
-            FAIL << "Cannot expand macro: " << token_iterator->val << endl;
-        }
-        size += get_macro_length(macros_map[token_iterator->val]) - 1;
-        token_iterator++;  
-    } while (token_iterator != tokens.end());
-    return size;
-}
-
-void Compiler::expand_macros(vector<Token> &tokens) {
-    int x = get_macro_length(tokens);
-    tokens.reserve(x);
-    map<string, vector<Token>>::iterator map_iterator;
-    vector<Token>::iterator token_iterator = tokens.begin();
-    do {
-        if (token_iterator->type != TokenType::MACRO) {
-            token_iterator++;
-            continue;
-        }
-        bool found = false;
-        for (map_iterator = macros_map.begin(); map_iterator != macros_map.end(); map_iterator++) {
-            if (map_iterator->first == token_iterator->val) {
-                found = true;
-                tokens.erase(token_iterator);
-                vector<Token> replace = map_iterator->second;
-                for (Token tk : replace) {
-                    tokens.insert(token_iterator, tk);
-                    token_iterator = next(token_iterator);
-                }
-                token_iterator = tokens.begin();
-            }
-        }
-        if (!found) {
-            FAIL << "Cannot expand macro: " << token_iterator->val << endl;
-        }
-    } while (token_iterator != tokens.end());
-}
-
-void Compiler::extract_macros() {
-    vector<string> strs = split_lines(src);
-    string rollover = "";
-    for (string str : strs) {
-        auto words = split_space(str);
-        std::transform(words[0].begin(), words[0].end(), words[0].begin(), ::tolower);
-        if (words[0] == "#macro" || rollover != "") {
-            string key; 
-            if (rollover != "") {
-                key = rollover;
-            } else {
-                key = words[1];
-                if (!regex_match(key, regex("^&[A-Za-z0-9_]+$"))) {
-                    FAIL << "Invalid macro name: '" << key << "'. Must start with &, and must contain only alphanumeric characters, plus _";
-                }
-                words.erase(words.begin());
-                words.erase(words.begin());
-                macros_map[key] = vector<Token>();
-            }
-
-            rollover = "";
-            
-            for (string word : words) {
-                Token tk = Tokenize(word, key)[0];
-                if (tk.type == TokenType::MACRO_LINE_ROLLOVER) {
-                    rollover = key;
-                    break;
-                }
-                macros_map[key].push_back(tk);
-
-            }
-            expand_macros(macros_map[key]);
-        }
-    }
 }
 
 void Compiler::expand_strings(vector<Token> &tokens) {

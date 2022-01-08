@@ -13,6 +13,8 @@ enum TokenType {
     KW_GOTO,
     KW_BRANCH,
     KW_POP,
+    KW_DUP,
+    KW_NOOP,
 
     REVERSE_START,
     REVERSE_END,

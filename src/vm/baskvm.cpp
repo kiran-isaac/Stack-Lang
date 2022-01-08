@@ -251,6 +251,13 @@ void BaskVM::eval()
         case OP_POP:
             current_stack->pop("Cannot pop from stack '" + current_stack->name + "'");
             break;
+        case OP_DUP:
+            {
+                Value* val = current_stack->pop("Cannot pop to duplicate from stack '" + current_stack->name + "'");
+                current_stack->push(val);
+                current_stack->push(val);
+            }
+            break;
         default:
             FAIL << "Unknown Opcode: " << std::hex << opcode;
         }

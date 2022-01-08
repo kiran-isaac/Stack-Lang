@@ -9,7 +9,7 @@ vector<string> split_space(std::string str)
     bool instring;
 
     for (char chr : str) {
-        if (chr == '"') {
+        if (chr == '"' || chr == '\'') {
             instring = !instring;
         } else if (chr == '[' || chr == ']') {
             if (current.size() != 0) {
