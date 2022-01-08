@@ -9,9 +9,17 @@
 // call func
 #define OP_FUNC_CALL 0x02
 
+// create new stack
 #define OP_CREATE 0x03
 
+// switch stacks
 #define OP_SWITCH 0x04
+
+// move between stacks
+#define OP_BRING 0x05
+
+// copy from stack
+#define OP_COPY 0x06
 
 #define SWITCH_MODE_DEFAULT 0x00
 #define SWITCH_MODE_IDENTIFIER 0x01

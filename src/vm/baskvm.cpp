@@ -184,6 +184,28 @@ void BaskVM::eval()
                 break;
             }
             break;
+        case OP_BRING:
+            {
+                string name = read_string();
+                if (symbol_table->find(name) == symbol_table->end()) {
+                    FAIL << "Invalid stack identifier: " << name;
+                }
+                Value* val = (*symbol_table)[name]->pop("Cannot bring from stack '" + name + "' to stack '" + current_stack->name + "' as '" + name + "' is empty");
+                current_stack->push(val);
+            }
+            break;
+        case OP_COPY:
+            {
+                string name = read_string();
+                if (symbol_table->find(name) == symbol_table->end()) {
+                    FAIL << "Invalid stack identifier: " << name;
+                }
+                Stack* stack = (*symbol_table)[name];
+                Value* val = stack->pop("Cannot bring from stack '" + name + "' to stack '" + current_stack->name + "' as '" + name + "' is empty");
+                current_stack->push(val);
+                stack->push(val);
+            }
+            break;
         default:
             FAIL << "Unknown Opcode: " << std::hex << opcode;
         }

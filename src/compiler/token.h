@@ -9,6 +9,8 @@ enum TokenType {
     KW_INBUILT,
     KW_SWITCH,
     KW_CREATE,
+    KW_BRING,
+    KW_COPY,
     
     ID,
     NUM_LIT,

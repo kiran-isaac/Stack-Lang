@@ -31,6 +31,8 @@ Compiler::Compiler(char* fname) {
     token_map1[keyword("push")] = TokenType::KW_PUSH;
     token_map1[keyword("switch")] = TokenType::KW_SWITCH;
     token_map1[keyword("create")] = TokenType::KW_CREATE;
+    token_map1[keyword("bring")] = TokenType::KW_BRING;
+    token_map1[keyword("copy")] = TokenType::KW_COPY;
     token_map1["^->$"] = TokenType::MACRO_LINE_ROLLOVER;
     token_map1["^(&\\S+$|\\+|/|\\*)$"] = TokenType::MACRO;
     token_map1["^'(\\S|\\\\\\S)'$"] = TokenType::CHAR_LIT;
@@ -50,6 +52,9 @@ Compiler::Compiler(char* fname) {
     ADD_INBUILT_MACRO("&exit", "exit");
     
     ADD_MACRO("&newline", "'\\n' &char &print");
+    ADD_MACRO("&cs", "CREATE SWITCH");
+    ADD_MACRO("&c", "CREATE");
+    ADD_MACRO("&s", "SWITCH");
 
     ADD_DATATYPE_MACRO("&num", to_string(DT_NUM));
     ADD_DATATYPE_MACRO("&char", to_string(DT_CHAR));
@@ -150,7 +155,7 @@ void Compiler::compile() {
                     }
                     break;
                 }
-            case KW_SWITCH:
+            case TokenType::KW_SWITCH:
                 {
                     Token tk2 = tokens[i+1];
                     ADD(OP_SWITCH);
@@ -166,7 +171,7 @@ void Compiler::compile() {
                     i += 2;
                 }
                 break;
-            case KW_CREATE: 
+            case TokenType::KW_CREATE: 
                 {
                     ADD(OP_CREATE);
 
@@ -193,6 +198,22 @@ void Compiler::compile() {
                         FAIL << "Invalid create id: " << tk.val << macro_error;
                     }
                     for (char chr : tk.val) {
+                        ADD((uint8_t)chr);
+                    }
+                    // Null Termination
+                    ADD(0x00);
+                    i += 2;
+                }
+                break;
+            case TokenType::KW_BRING: case TokenType::KW_COPY:
+                {
+                    Token tk2 = tokens[i+1];
+                    ADD((tk.type == KW_BRING) ? OP_BRING : OP_COPY);
+                    if (tk2.type != TokenType::ID) {
+                        string macro_error = MACRO_ERROR(tk2);
+                        FAIL << "Invalid switch id: " << tk2.val << macro_error;
+                    }
+                    for (char chr : tk2.val) {
                         ADD((uint8_t)chr);
                     }
                     // Null Termination
@@ -332,7 +353,7 @@ void Compiler::add_exit(vector<Token> &tokens) {
             exit = true;
         }
     }
-    
+
     if (!exit) {
         tokens.push_back(Token{NUM_LIT, "0", "auto added exit"});
         tokens.push_back(Token{KW_CALL, "call", "auto added exit"});

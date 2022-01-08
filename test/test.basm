@@ -1,2 +1,69 @@
-0 1 0
-1 +
+&cs x 0
+&cs y 1
+&cs z 0
+
+#MACRO &fib &s z &num &print copy y &s y bring x + &s x copy z &newline
+
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+&fib
+
+0 &exit
