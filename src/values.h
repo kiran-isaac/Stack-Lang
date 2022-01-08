@@ -29,9 +29,14 @@ struct Value {
         }
         return f;
     }
+
+    bool b() {
+        return (d() == 0) ? false : true;
+    }
 };
 
 #define NUMBER(value) Value{DT_NUM, double_to_word(value)}
 #define CHAR(value) Value{DT_CHAR, char_to_word(value)}
+#define BOOL(value) Value{DT_BOOL, double_to_word((double)value)}
 
 #endif

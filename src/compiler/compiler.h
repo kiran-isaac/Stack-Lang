@@ -45,6 +45,7 @@ public:
     TokenType match(std::string);
     WORD add_constant(Value val);
     std::vector<BYTE> get_constants();
+    std::vector<BYTE> get_labels();
     void remove_directives();
     void expand_macros(std::vector<Token> &tokens);
     void extract_macros();
@@ -55,6 +56,7 @@ public:
     std::vector<Token> Tokenize(std::string, std::string = "");
 
     std::vector<Value> constants;
+    std::map<std::string, WORD> labels;
     std::string filename;
     std::string dir;
     std::string src;

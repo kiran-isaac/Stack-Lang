@@ -32,12 +32,14 @@ Compiler::Compiler(char* fname) {
     token_map1[keyword("create")] = TokenType::KW_CREATE;
     token_map1[keyword("bring")] = TokenType::KW_BRING;
     token_map1[keyword("copy")] = TokenType::KW_COPY;
+    token_map1[keyword("goto")] = TokenType::KW_GOTO;
+    token_map1[keyword("branch")] = TokenType::KW_BRANCH;
     token_map1["^[A-Za-z_]*:[A-Za-z_]+"] = TokenType::FUNC_CALL;
-    token_map1["^[A-Za-z_]+:"] = TokenType::FUNC_CALL;
+    token_map1["^[A-Za-z_]+:"] = TokenType::LABEL;
     token_map1["^->$"] = TokenType::MACRO_LINE_ROLLOVER;
     token_map1["^\\[$"] = TokenType::REVERSE_START;
     token_map1["^]$"] = TokenType::REVERSE_END;
-    token_map1["^(&\\S+$|\\+|/|\\*|-|\\^)$"] = TokenType::MACRO;
+    token_map1["^(&\\S+$|\\+|/|\\*|-|\\^|==|<|>|<=|>=)$"] = TokenType::MACRO;
     token_map1["^'(\\S|\\\\\\S)'$"] = TokenType::CHAR_LIT;
     token_map1["^\".+\"$"] = TokenType::STRING_LIT;
     token_map1["^[-]?([0-9]*[.])?[0-9]+$"] = TokenType::NUM_LIT;
@@ -49,6 +51,11 @@ Compiler::Compiler(char* fname) {
     ADD_MACRO("-", ":sub");
     ADD_MACRO("/", ":div");
     ADD_MACRO("^", ":pow");
+    ADD_MACRO("==", ":equal");
+    ADD_MACRO(">", ":gt");
+    ADD_MACRO("<", ":lt");
+    ADD_MACRO(">=", ":gte");
+    ADD_MACRO("<=", ":lte");
     
     ADD_MACRO("&newline", "'\\n' &char :print");
     ADD_MACRO("&cs", "CREATE SWITCH");
@@ -82,7 +89,7 @@ WORD Compiler::add_constant(Value val) {
 
 vector<BYTE> Compiler::get_constants() {
     vector<BYTE> out = vector<BYTE>();
-    uint64_t size = constants.size();
+    WORD size = constants.size();
     ADD_WORD(size);
     for (Value val : constants) {
         if (val.type == DT_NUM) {
@@ -99,6 +106,20 @@ vector<BYTE> Compiler::get_constants() {
     return out;
 }
 
+vector<BYTE> Compiler::get_labels() {
+    vector<BYTE> out = vector<BYTE>();
+    WORD size = labels.size();
+    ADD_WORD(size);
+    for (map<string, WORD>::iterator i = labels.begin(); i != labels.end(); i++) {
+        for (char chr : i->first) {
+            ADD((BYTE)chr);
+        }
+        ADD(0x00);
+        ADD_WORD(i->second);
+    }
+    return out;
+}
+
 void Compiler::compile() {
     extract_macros();
     remove_directives();
@@ -107,7 +128,7 @@ void Compiler::compile() {
     expand_strings(tokens);
     expand_macros(tokens);
     reverse(tokens);
-    // add_exit(tokens);
+    add_exit(tokens);
     vector<BYTE> out = vector<BYTE>();
     int i = 0;
     while (i < tokens.size()) {
@@ -119,16 +140,38 @@ void Compiler::compile() {
                         
                     WORD const_index = add_constant(NUMBER(stof(tk.val)));
                     ADD_WORD(const_index);
-                    i += 1;
+                    i++;
                 }
                 break;
-            case TokenType::CHAR_LIT: 
+            case TokenType::CHAR_LIT:
                 {
                     ADD(OP_CONST);
                     char val = (tk.val != "'\\n'") ? tk.val[1] : '\n';
                     WORD const_index = add_constant(CHAR(val));
                     ADD_WORD(const_index);
-                    i += 1;
+                    i++;
+                }
+                break;
+            case TokenType::LABEL: 
+                {
+                    labels[tk.val.substr(0, tk.val.size() - 1)] = i;
+                    i++;
+                }
+                break;
+            case KW_GOTO: case KW_BRANCH:
+                {
+                    Token tk2 = tokens[i+1];
+                    ADD((tk.type == KW_GOTO) ? OP_GOTO : OP_BRANCH);
+                    if (tk2.type != TokenType::ID) {
+                        string macro_error = (tk.macro != "") ? " (expanded from macro: " + tk.macro + ")" : "";
+                        FAIL << "Invalid label id in GOTO: " << tk2.val << macro_error;
+                    }
+                    for (char chr : tk2.val) {
+                        ADD((uint8_t)chr);
+                    }
+                    // Null Termination
+                    ADD(0x00);
+                    i += 2;
                 }
                 break;
             case TokenType::FUNC_CALL:
@@ -145,9 +188,9 @@ void Compiler::compile() {
                     }
                     // Null Termination
                     ADD(0x00);
-                    i += 1;
-                    break;
+                    i++;
                 }
+                break;
             case TokenType::KW_SWITCH:
                 {
                     Token tk2 = tokens[i+1];
@@ -182,7 +225,7 @@ void Compiler::compile() {
                         // Null Termination
                         ADD(0x00);
                         ADD(OP_SWITCH);
-                        i += 1;
+                        i++;
                         tk = tk3;
                     }
 
@@ -222,6 +265,9 @@ void Compiler::compile() {
     }
 
     for (BYTE byte : get_constants()) {
+        fout.write((char*)&byte, 1);
+    }
+    for (BYTE byte : get_labels()) {
         fout.write((char*)&byte, 1);
     }
     for (BYTE byte : out) {
@@ -318,7 +364,7 @@ void Compiler::extract_macros() {
 }
 
 void Compiler::expand_strings(vector<Token> &tokens) {
-    for (vector<Token> ::iterator token_iterator = tokens.begin(); token_iterator != tokens.end() + 1; token_iterator++) {
+    for (vector<Token> ::iterator token_iterator = tokens.begin(); token_iterator != tokens.end(); token_iterator++) {
         if (token_iterator->type == TokenType::STRING_LIT) {
             string str = token_iterator->val.substr(1, token_iterator->val.size() - 2) + (char)0x00;
             std::reverse(str.begin(), str.end());
@@ -341,7 +387,7 @@ void Compiler::expand_strings(vector<Token> &tokens) {
 
 void Compiler::reverse(std::vector<Token> &tokens) {
     bool reverse = false;
-    for (vector<Token> ::iterator token_iterator = tokens.begin(); token_iterator != tokens.end() + 1; token_iterator++) {
+    for (vector<Token> ::iterator token_iterator = tokens.begin(); token_iterator != tokens.end(); token_iterator++) {
         if (token_iterator->type == TokenType::REVERSE_START) {
             reverse = true;
             tokens.erase(token_iterator);
@@ -358,7 +404,7 @@ void Compiler::reverse(std::vector<Token> &tokens) {
     vector<Token>::iterator reverse_start;
     vector<Token>::iterator reverse_end;
     reverse = false;
-    for (vector<Token> ::iterator token_iterator = tokens.begin(); token_iterator != tokens.end() + 1; token_iterator++) {
+    for (vector<Token> ::iterator token_iterator = tokens.begin(); token_iterator != tokens.end(); token_iterator++) {
         if (!reverse) {
             if (token_iterator->reverse) 
             {

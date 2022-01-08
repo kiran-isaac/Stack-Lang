@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include <cmath>
+#include <limits>
 #include "values.h"
 #include "stack.h"
 #include "../byte_ops.h"

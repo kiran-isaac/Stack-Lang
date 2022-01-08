@@ -21,9 +21,14 @@
 // copy from stack
 #define OP_COPY 0x06
 
+#define OP_GOTO 0x07
+
+#define OP_BRANCH 0x08
+
 #define SWITCH_MODE_DEFAULT 0x00
 #define SWITCH_MODE_IDENTIFIER 0x01
 
 #define FUNC_CALL_MODE_INBUILT 0x00
+#define FUNC_CALL_MODE_STD 0x01
 
 #endif

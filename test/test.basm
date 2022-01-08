@@ -1,1 +1,1 @@
-1 0 :print
+main: 1 1 >= branch main

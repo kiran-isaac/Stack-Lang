@@ -3,6 +3,7 @@
 using namespace std;
 
 BaskVM::BaskVM() {
+    labels = new map<string, WORD>;
     default_stack = new Stack("default");
     current_stack = default_stack;
     symbol_table = new std::map<std::string, Stack*>;
@@ -23,100 +24,104 @@ void BaskVM::load(char* fname) {
 
 void BaskVM::exec() {
     // code = {
-    //         // 2 constants
+    // // 2 constants
     //     0x00,
     //     0x00,
     //     0x00,
-    //     0x04,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x02,
 
-    //         // Const 1
-    //     0x00,
-    //     0x42,
-    //     0xc8,
-    //     0x33,
-    //     0x33,
-
-    //         // Const 2
-    //     0x01,
-    //     65,
-    //         // Const 3
-    //     0x01,
-    //     '\n',
-
-    //         //Const 4
+    // // Const 1: 1
     //     0x00,
     //     0x3F,
-    //     0x80,
+    //     0xF0,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
     //     0x00,
     //     0x00,
 
-    //     OP_CREATE,
-    //     'x',
+    // // Const 2: 0
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
     //     0x00,
 
-    //     OP_SWITCH,
-    //     'x',
+    // // 1 label
     //     0x00,
-
-
-    //          // Push const 0
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
     //     0x01,
+    
+    //     'm', 'a', 'i', 'n', 0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
     //     0x00,
     //     0x00,
     //     0x00,
     //     0x00,
 
-    //          // Push const 1
-    //     0x01,
+    // // Push const 1
+    //     OP_CONST,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+
+    // // Push const 2
+    //     OP_CONST,
+    //     0x00,
+    //     0x00,
+    //     0x00,
+    //     0x00,
     //     0x00,
     //     0x00,
     //     0x00,
     //     0x01,
 
-    //     0x02,
-    //     0x00,
-    //          // Func name
-    //     0x70,
-    //     0x72,
-    //     0x69,
-    //     0x6E,
-    //     0x74,
-    //     0x00,
-        
-    //     // Add newline
-    //     0x01,
-    //     0x00,
-    //     0x00,
-    //     0x00,
-    //     0x02,
-
-    //     // Add char
-    //     0x01,
-    //     0x00,
-    //     0x00,
-    //     0x00,
-    //     0x03,
-    //     0x02,
-    //     0x00,
-    //     0x70,
-    //     0x72,
-    //     0x69,
-    //     0x6E,
-    //     0x74,
+    //     OP_FUNC_CALL,
+    //     FUNC_CALL_MODE_INBUILT,
+    //     'p',
+    //     'r',
+    //     'i',
+    //     'n',
+    //     't',
     //     0x00,
 
-    //          // Exit
-    //     0x00
+    //     OP_GOTO,
+    //     'm', 'a', 'i', 'n', 0x00,
     // };
 
     ip = &code[0];
 
     read_const();
+    read_label();
+
+    code_start = ip;
     eval();
 }
 
 void BaskVM::read_const() {
-    uint32_t const_num = GET_WORD();
+    WORD const_num = GET_WORD();
     for (int i = 0; i < const_num; i++) {
         switch (READ_BYTE()) {
             case DT_NUM:
@@ -132,6 +137,18 @@ void BaskVM::read_const() {
                 }
                 break;
         }
+    }
+}
+
+void BaskVM::read_label() {
+    WORD const_num = GET_WORD();
+    for (int i = 0; i < const_num; i++) {
+        string str = read_string();
+        WORD location = GET_WORD();
+        if (labels->find(str) != labels->end()) {
+            FAIL << "The label " << str << " is defined multiple times" << endl;
+        } 
+        (*labels)[str] = location;
     }
 }
 
@@ -174,6 +191,26 @@ void BaskVM::eval()
                     FAIL << "Invalid stack identifier: " << name;
                 }
                 current_stack = ((*symbol_table)[name]);
+            }
+            break;
+        case OP_GOTO:
+            {
+                string name = read_string();
+                if (labels->find(name) == labels->end()) {
+                    FAIL << "Invalid label identifier: " << name;
+                }
+                ip = code_start + (*labels)[name];
+            }
+            break;
+        case OP_BRANCH:
+            {
+                string name = read_string();
+                if (!(current_stack->pop("Cannot pop branch conditional value")->b())) continue;
+
+                if (labels->find(name) == labels->end()) {
+                    FAIL << "Invalid label identifier: " << name;
+                }
+                ip = code_start + (*labels)[name];
             }
             break;
         case OP_FUNC_CALL:

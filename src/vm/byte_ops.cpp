@@ -10,9 +10,9 @@ string bytes_to_string(vector<uint8_t> string) {
     return convert.str();
 }
 
-WORD double_to_word(double f) {
+WORD double_to_word(double d) {
     WORD word;
-    memcpy(&word, &f, 8);
+    memcpy(&word, &d, 8);
     
     return word;
 }

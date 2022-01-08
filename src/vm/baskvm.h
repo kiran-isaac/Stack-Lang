@@ -28,16 +28,15 @@ public:
     BaskVM();
 
     std::string read_string();
-
     void load(char* fname);
-
     void exec();
-
     void read_const();
-
+    void read_label();
     void eval();
 
-    BYTE *ip;
+    BYTE* ip;
+    BYTE* code_start;
+    std::map<std::string, uint64_t>* labels;
     Stack* default_stack;
     Stack* current_stack;
     std::map<std::string, Stack*>* symbol_table;

@@ -3,6 +3,7 @@
 
 #define DT_NUM 0x00
 #define DT_CHAR 0x01
-#define DT_STRING 0x02
+#define DT_BOOL 0x02
+#define DT_STRING 0x03
 
 #endif /* A4C9B5DD_9304_46DB_88F3_6822341E1C93 */

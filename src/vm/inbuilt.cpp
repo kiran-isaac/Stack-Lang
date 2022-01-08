@@ -39,15 +39,15 @@ void print(Stack* stack) {
     uint32_t mode = stack->pop("[Inbuilt Function : print] Cannot pop parameter 0: print datatype")->d();
     switch (mode) {
         case DT_NUM:
+            typedef std::numeric_limits< double > dbl;
+            cout.precision(dbl::max_digits10);
             cout << stack->pop("[Inbuilt Function : print] Cannot pop parameter 1: print value")->d();
             break;
         case DT_CHAR:
             cout << stack->pop("[Inbuilt Function : print] Cannot pop parameter 1: print value")->c();
             break;
         case DT_STRING:
-            {
-                cout << pop_string(stack, "[Inbuilt Function : print] Cannot pop string");
-            }
+            cout << pop_string(stack, "[Inbuilt Function : print] Cannot pop string");
             break;
         default:
             FAIL << "[Inbuilt Function : print]: Invalid value for print datatype. Push the print datatype before calling print";
@@ -70,33 +70,63 @@ void str_concat(Stack* stack) {
 }
 
 void add(Stack* stack) {
-    float op1 = stack->pop("[Inbuilt Function : +] Cannot pop parameter 0: operand")->d();
-    float op2 = stack->pop("[Inbuilt Function : +] Cannot pop parameter 1: operand")->d();
+    double op1 = stack->pop("[Inbuilt Function : +] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : +] Cannot pop parameter 1: operand")->d();
     stack->push(new NUMBER(op1 + op2));
 }
 
 void sub(Stack* stack) {
-    float op1 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 0: operand")->d();
-    float op2 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 1: operand")->d();
-    stack->push(new NUMBER(op2 - op1));
+    double op1 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 1: operand")->d();
+    stack->push(new NUMBER(op1 - op2));
 }
 
 void mul(Stack* stack) {
-    float op1 = stack->pop("[Inbuilt Function : *] Cannot pop parameter 0: operand")->d();
-    float op2 = stack->pop("[Inbuilt Function : *] Cannot pop parameter 1: operand")->d();
-    stack->push(new NUMBER(op2 * op1));
+    double op1 = stack->pop("[Inbuilt Function : *] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : *] Cannot pop parameter 1: operand")->d();
+    stack->push(new NUMBER(op1 * op2));
 }
 
 void div(Stack* stack) {
-    float op1 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 0: operand")->d();
-    float op2 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 1: operand")->d();
-    stack->push(new NUMBER(op2 / op1));
+    double op1 = stack->pop("[Inbuilt Function : /] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : /] Cannot pop parameter 1: operand")->d();
+    stack->push(new NUMBER(op1 / op2));
 }
 
 void pow(Stack* stack) {
-    float op1 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 0: operand")->d();
-    float op2 = stack->pop("[Inbuilt Function : -] Cannot pop parameter 1: operand")->d();
-    stack->push(new NUMBER((float)pow(op2, op1)));
+    double op1 = stack->pop("[Inbuilt Function : ^] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : ^] Cannot pop parameter 1: operand")->d();
+    stack->push(new NUMBER((double)pow(op1, op2)));
+}
+
+void equal(Stack* stack) {
+    double op1 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 1: operand")->d();
+    stack->push(new BOOL(op1 == op2));
+}
+
+void less_than(Stack* stack) {
+    double op1 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 1: operand")->d();
+    stack->push(new BOOL(op1 < op2));
+}
+
+void greater_than(Stack* stack) {
+    double op1 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 1: operand")->d();
+    stack->push(new BOOL(op1 > op2));
+}
+
+void greater_than_or_equal(Stack* stack) {
+    double op1 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 1: operand")->d();
+    stack->push(new BOOL(op1 >= op2));
+}
+
+void less_than_or_equal(Stack* stack) {
+    double op1 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 1: operand")->d();
+    stack->push(new BOOL(op1 <= op2));
 }
 
 void exit(Stack* stack) {
@@ -116,6 +146,13 @@ void init_inbuilts() {
     funcMap["mul"]        = &mul;
     funcMap["div"]        = &div;
     funcMap["pow"]        = &pow;
+
+    funcMap["equal"]      = &equal;
+    funcMap["lt"]         = &less_than;
+    funcMap["gt"]         = &greater_than;
+    funcMap["lte"]        = &less_than_or_equal;
+    funcMap["gte"]        = &greater_than_or_equal;
+
     funcMap["stack_len"]  = &stack_len;
     funcMap["reverse"]    = &reverse;
     funcMap["stackID"]    = &StackID;
