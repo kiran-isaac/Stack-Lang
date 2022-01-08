@@ -55,6 +55,7 @@ Compiler::Compiler(char* fname) {
     ADD_MACRO("&cs", "CREATE SWITCH");
     ADD_MACRO("&c", "CREATE");
     ADD_MACRO("&s", "SWITCH");
+    ADD_MACRO("&sd", "SWITCH default");
 
     ADD_DATATYPE_MACRO("&num", to_string(DT_NUM));
     ADD_DATATYPE_MACRO("&char", to_string(DT_CHAR));
@@ -327,10 +328,9 @@ void Compiler::extract_macros() {
 void Compiler::expand_strings(vector<Token> &tokens) {
     for (vector<Token> ::iterator token_iterator = tokens.begin(); token_iterator != tokens.end(); token_iterator++) {
         if (token_iterator->type == TokenType::STRING_LIT) {
-            string str = token_iterator->val.substr(1, token_iterator->val.size() - 2);
+            string str = token_iterator->val.substr(1, token_iterator->val.size() - 2) + (char)0x00;
+            std::reverse(str.begin(), str.end());
             tokens.erase(token_iterator);
-            tokens.insert(token_iterator, Token{TokenType::MACRO, "&reverse"});
-            tokens.insert(token_iterator, Token{TokenType::NUM_LIT, "0"});
             
             for (int i = 0; i < str.size(); i++) {
                 if (str[i] == '\\') {
@@ -341,6 +341,8 @@ void Compiler::expand_strings(vector<Token> &tokens) {
                 }
                 token_iterator++;
             }
+
+            token_iterator = tokens.begin();
         }
     }
 }
