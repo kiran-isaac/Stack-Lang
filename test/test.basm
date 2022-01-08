@@ -5,9 +5,9 @@
 
 loop: &sd copy n copy x > branch endloop
     copy z &num :print &newline
-    &s z copy y
+    &s z pop copy y pop
     &s y copy x +
-    &s x copy z
+    &s x pop copy z
     goto loop
 endloop:
     "Done!" &string :print &newline

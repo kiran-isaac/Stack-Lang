@@ -34,6 +34,7 @@ Compiler::Compiler(char* fname) {
     token_map1[keyword("copy")] = TokenType::KW_COPY;
     token_map1[keyword("goto")] = TokenType::KW_GOTO;
     token_map1[keyword("branch")] = TokenType::KW_BRANCH;
+    token_map1[keyword("pop")] = TokenType::KW_POP;
     token_map1["^[A-Za-z_]*:[A-Za-z_]+"] = TokenType::FUNC_CALL;
     token_map1["^[A-Za-z_]+:"] = TokenType::LABEL;
     token_map1["^->$"] = TokenType::MACRO_LINE_ROLLOVER;
@@ -157,6 +158,10 @@ void Compiler::compile() {
                     labels[tk.val.substr(0, tk.val.size() - 1)] = out.size();
                     i++;
                 }
+                break;
+            case TokenType::KW_POP:
+                ADD(OP_POP);
+                i++;
                 break;
             case KW_GOTO: case KW_BRANCH:
                 {

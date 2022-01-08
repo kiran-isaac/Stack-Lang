@@ -12,6 +12,7 @@ enum TokenType {
     KW_COPY,
     KW_GOTO,
     KW_BRANCH,
+    KW_POP,
 
     REVERSE_START,
     REVERSE_END,

@@ -25,6 +25,8 @@
 
 #define OP_BRANCH 0x08
 
+#define OP_POP 0x09
+
 #define SWITCH_MODE_DEFAULT 0x00
 #define SWITCH_MODE_IDENTIFIER 0x01
 

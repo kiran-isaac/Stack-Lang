@@ -243,10 +243,13 @@ void BaskVM::eval()
                     FAIL << "Invalid stack identifier: " << name;
                 }
                 Stack* stack = (*symbol_table)[name];
-                Value* val = stack->pop("Cannot bring from stack '" + name + "' to stack '" + current_stack->name + "' as '" + name + "' is empty");
+                Value* val = stack->pop("Cannot copy from stack '" + name + "' to stack '" + current_stack->name + "' as '" + name + "' is empty");
                 current_stack->push(val);
                 stack->push(val);
             }
+            break;
+        case OP_POP:
+            current_stack->pop("Cannot pop from stack '" + current_stack->name + "'");
             break;
         default:
             FAIL << "Unknown Opcode: " << std::hex << opcode;
