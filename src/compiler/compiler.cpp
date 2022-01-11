@@ -103,7 +103,7 @@ Compiler::Compiler(char* fname) {
     };
 }
 
-void Compiler::compile() {
+std::vector<BYTE> Compiler::compile() {
     extract_macros();
     remove_directives();
     vector<Token> tokens = Tokenize(this->src);
@@ -113,6 +113,7 @@ void Compiler::compile() {
     expand_strings(tokens);
     extract_functions(tokens);
 
+    vector<BYTE> output;
     vector<BYTE> out;
     vector<BYTE> fn_code;
     for (map<string, vector<Token>>::iterator i = functions.begin(); i != functions.end(); i++) {
@@ -134,12 +135,15 @@ void Compiler::compile() {
     }
 
     for (BYTE byte : get_constants()) {
+        output.push_back(byte);
         fout.write((char*)&byte, 1);
     }
 
     for (BYTE byte : out) {
+        output.push_back(byte);
         fout.write((char*)&byte, 1);
     }
 
     fout.close();
+    return output;
 }

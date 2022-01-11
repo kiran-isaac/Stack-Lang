@@ -44,7 +44,7 @@ public:
     std::vector<std::string> inbuilts;
 
     Compiler(char* fname);
-    void compile();
+    std::vector<BYTE> compile();
     TokenType match(std::string);
     WORD add_constant(Value val);
     void add_function(std::string name);

@@ -1,5 +1,11 @@
-func multiply
+func pop_string
+    &string :print
+endfunc
+
+func test2
     *
 endfunc
 
-1 8 :multiply &num :print
+1 1 :test2 &num :print
+
+"Hello World!" :pop_string

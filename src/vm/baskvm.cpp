@@ -17,9 +17,8 @@ BaskVM::BaskVM() {
 }
 
 void BaskVM::load(char* fname) {
-    string filename = fname;
     char buffer[BUFFER_SIZE];
-    ifstream file(filename, ios::in | ios::binary);
+    ifstream file("/home/kiran/baskvm/test/a.out", ios::in | ios::binary);
     file.read(buffer, BUFFER_SIZE);
     for (char chr : buffer) {
         this->code.push_back((uint8_t)chr);
@@ -160,8 +159,9 @@ void BaskVM::eval()
                 vm->code = functions[name];
                 vm->name = name;
                 vm->default_stack->name = name + ":default";
-
-                for (int i = 0; i <= current_stack->size(); i++) {
+                int stack_size = current_stack->size();
+                current_stack->reverse();
+                for (int i = 0; i <= stack_size - 1; i++) {
                     Value* val = current_stack->pop();
                     vm->default_stack->push(new Value{val->type, val->data});
                 }
@@ -169,13 +169,15 @@ void BaskVM::eval()
                 current_stack->clear();
 
                 vm->constants = constants;
+                vm->current_stack = vm->default_stack;
                 vm->eval();
                 vm->default_stack->reverse();
-                for (int i = 0; i <= vm->default_stack->size(); i++) {
+                for (int i = 0; i < vm->default_stack->size(); i++) {
                     Value* val = vm->default_stack->pop();
                     current_stack->push(new Value{val->type, val->data});
                 }
                 for (std::map<std::string, Stack*>::iterator i = vm->symbol_table.begin(); i != vm->symbol_table.end(); i++) {
+                    if (i->second == vm->default_stack) continue;
                     i->second->clear();
                     delete i->second;
                 }

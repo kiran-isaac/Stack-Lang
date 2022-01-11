@@ -34,13 +34,12 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/baskvm",
-            "args": ["run", "${workspaceFolder}/test/a.out"],
-            "stopAtEntry": true,
+            "args": ["${workspaceFolder}/test/test2.bsk"],
+            "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "preLaunchTask": "compile",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

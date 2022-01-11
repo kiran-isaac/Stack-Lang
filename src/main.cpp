@@ -4,7 +4,7 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-    if (argc >= 2) {
+    if (argc > 2) {
         string mode = argv[1];
         if (mode == "compile") {
             Compiler compiler = Compiler(argv[2]);
@@ -14,5 +14,11 @@ int main(int argc, char *argv[]) {
             vm.load(argv[2]);
             vm.exec();
         }
+    } else {
+        Compiler compiler = Compiler(argv[1]);
+        BaskVM vm = BaskVM();
+        vm.code = compiler.compile();
+        vm.exec();
     }
+
 }
