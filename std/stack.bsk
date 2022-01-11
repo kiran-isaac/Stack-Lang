@@ -3,7 +3,8 @@ func dump
 endfunc
 
 func shift 
-
+    &cs temp bring default 
+    &sd :reverse bring temp :reverse
 endfunc
 
 func shift_n
