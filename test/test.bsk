@@ -1,1 +1,1 @@
-"Hello!" :str_len &num :print &newline &string :print &newline
+"Hello World!" "tesasfddfst" :str_shift &string :print &newline &string :print &newline

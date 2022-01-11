@@ -16,7 +16,7 @@ BaskVM::BaskVM() {
     init_inbuilts();
 }
 
-vector<BYTE> BaskVM::load(char* fname) {
+vector<BYTE> BaskVM::load(const char* fname) {
     vector<BYTE> code;
     char buffer[BUFFER_SIZE];
     ifstream file(fname, ios::in | ios::binary);
@@ -27,10 +27,20 @@ vector<BYTE> BaskVM::load(char* fname) {
     return code;
 }
 
-void BaskVM::exec() {
+void BaskVM::exec(int argc, char *argv[]) {
+    string std_path = "/usr/lib/bask/stdlib";
+    InputParser input(argc, argv);
+    if (input.cmdOptionExists("-std")) {
+        std_path = input.getCmdOption("-std");
+    }
+
     WORD size = GET_WORD();
 
-    vector<BYTE> std = load((char*)"/home/kiran/baskvm/std/a.out");
+    if (!filesystem::exists(filesystem::path(std_path))) {
+        FAIL << "Unable to find stdlib at '" << std_path << "'. Please build the standard library and move it to this location or locate it using the -std flag";
+    }
+
+    vector<BYTE> std = load(std_path.c_str());
     BYTE b0 = std[0];
     BYTE b1 = std[1];
     BYTE b2 = std[2];
@@ -39,6 +49,8 @@ void BaskVM::exec() {
     BYTE b5 = std[5];
     BYTE b6 = std[6];
     BYTE b7 = std[7];
+
+
     std = vector<BYTE>(std.begin() + 8, std.end());
 
     for (BYTE byte : std) {

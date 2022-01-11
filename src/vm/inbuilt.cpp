@@ -66,7 +66,6 @@ void str_concat(Stack* stack) {
     string str1 = pop_string(stack, "[Inbuilt Function : str_concat] Cannot get first string");
     string str2 = pop_string(stack, "[Inbuilt Function : str_concat] Cannot get second string");
     push_string(stack, str1 + str2);
-    
 }
 
 void add(Stack* stack) {

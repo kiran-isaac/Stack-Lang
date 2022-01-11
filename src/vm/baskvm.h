@@ -10,6 +10,7 @@
 #include <iterator>
 #include <fstream>
 #include <cstdio>
+#include <filesystem>
 #include "../datatypes.h"
 #include "../byte_ops.h"
 #include "../opcode.h"
@@ -17,6 +18,7 @@
 #include "logger.h"
 #include "../values.h"
 #include "inbuilt.h"
+#include "../input_parser.h"
 
 // 10kB
 #define BUFFER_SIZE 1024 * 10
@@ -29,8 +31,8 @@ public:
     BaskVM();
 
     std::string read_string();
-    std::vector<BYTE> load(char* fname);
-    void exec();
+    std::vector<BYTE> load(const char* fname);
+    void exec(int argc, char *argv[]);
     void read_consts();
     void read_labels();
     void read_funcs(int num);

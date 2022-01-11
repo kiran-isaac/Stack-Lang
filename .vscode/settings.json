@@ -55,6 +55,8 @@
         "shared_mutex": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "codecvt": "cpp",
+        "iomanip": "cpp"
     }
 }
