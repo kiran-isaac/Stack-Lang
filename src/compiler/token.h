@@ -17,6 +17,7 @@ enum TokenType {
     KW_NOOP,
     KW_FUNC,
     KW_ENDFUNC,
+    KW_CLONE,
 
     REVERSE_START,
     REVERSE_END,

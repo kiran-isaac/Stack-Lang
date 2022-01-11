@@ -13,7 +13,7 @@ typedef uint64_t WORD;
 #define GET_WORD() COMBINE_8_BYTES(read_byte(), read_byte(), read_byte(), read_byte(), read_byte(), read_byte(), read_byte(), read_byte())
 
 #define COMBINE_2_BYTES(a, b) ((uint16_t)a << 8) | b
-#define COMBINE_8_BYTES(a, b, c, d, e, f, g, h) (WORD)a << 56 | (WORD)b << 48 | (WORD)a << 40 | (WORD)b << 32 | (WORD)a << 24 | (WORD)b << 16 | (WORD)c << 8 | (WORD)d
+#define COMBINE_8_BYTES(a, b, c, d, e, f, g, h) (WORD)a << 56 | (WORD)b << 48 | (WORD)c << 40 | (WORD)d << 32 | (WORD)e << 24 | (WORD)f << 16 | (WORD)g << 8 | (WORD)h
 
 WORD double_to_word(double f);
 WORD char_to_word(char c);

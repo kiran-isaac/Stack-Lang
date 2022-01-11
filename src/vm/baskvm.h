@@ -29,11 +29,11 @@ public:
     BaskVM();
 
     std::string read_string();
-    void load(char* fname);
+    std::vector<BYTE> load(char* fname);
     void exec();
     void read_consts();
     void read_labels();
-    void read_funcs();
+    void read_funcs(int num);
     void eval();
 
     BYTE read_byte();

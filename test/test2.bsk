@@ -1,11 +1,1 @@
-func pop_string
-    &string :print
-endfunc
-
-func test2
-    *
-endfunc
-
-1 1 :test2 &num :print
-
-"Hello World!" :pop_string
+"Hello World!" :str_len &num :print

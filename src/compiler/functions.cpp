@@ -31,6 +31,9 @@ void Compiler::extract_functions(vector<Token> &tokens) {
             i++;
         }
     }
-    functions["main"] = main;
+    
+    if (main.size() > 0) {
+        functions["main"] = main;
+    }
     tokens.clear();
 }

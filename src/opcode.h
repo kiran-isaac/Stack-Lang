@@ -31,6 +31,8 @@
 
 #define OP_NOOP 0x0B
 
+#define OP_CLONE 0x0C
+
 #define SWITCH_MODE_DEFAULT 0x00
 #define SWITCH_MODE_IDENTIFIER 0x01
 

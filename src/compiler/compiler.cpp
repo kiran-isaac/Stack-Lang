@@ -37,6 +37,7 @@ Compiler::Compiler(char* fname) {
     token_map1[keyword("pop")] = TokenType::KW_POP;
     token_map1[keyword("dup")] = TokenType::KW_DUP;
     token_map1[keyword("noop")] = TokenType::KW_NOOP;
+    token_map1[keyword("clone")] = TokenType::KW_CLONE;
     token_map1[keyword("func")] = TokenType::KW_FUNC;
     token_map1[keyword("endfunc")] = TokenType::KW_ENDFUNC;
     token_map1["^[A-Za-z_]*:[A-Za-z_]+"] = TokenType::FUNC_CALL;
@@ -116,6 +117,8 @@ std::vector<BYTE> Compiler::compile() {
     vector<BYTE> output;
     vector<BYTE> out;
     vector<BYTE> fn_code;
+    WORD size = functions.size();
+    ADD_WORD(size);
     for (map<string, vector<Token>>::iterator i = functions.begin(); i != functions.end(); i++) {
         fn_code = code_gen(i->second);
         
@@ -132,11 +135,6 @@ std::vector<BYTE> Compiler::compile() {
             ADD(bte);
         }
         ADD(0x00);
-    }
-
-    for (BYTE byte : get_constants()) {
-        output.push_back(byte);
-        fout.write((char*)&byte, 1);
     }
 
     for (BYTE byte : out) {

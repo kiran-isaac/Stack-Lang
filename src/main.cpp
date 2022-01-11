@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
             compiler.compile();
         } else if (mode == "run") {
             BaskVM vm = BaskVM();
-            vm.load(argv[2]);
+            vm.code = vm.load(argv[1]);
             vm.exec();
         }
     } else {
@@ -20,5 +20,4 @@ int main(int argc, char *argv[]) {
         vm.code = compiler.compile();
         vm.exec();
     }
-
 }

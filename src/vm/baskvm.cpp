@@ -16,20 +16,39 @@ BaskVM::BaskVM() {
     init_inbuilts();
 }
 
-void BaskVM::load(char* fname) {
+vector<BYTE> BaskVM::load(char* fname) {
+    vector<BYTE> code;
     char buffer[BUFFER_SIZE];
-    ifstream file("/home/kiran/baskvm/test/a.out", ios::in | ios::binary);
+    ifstream file(fname, ios::in | ios::binary);
     file.read(buffer, BUFFER_SIZE);
     for (char chr : buffer) {
-        this->code.push_back((uint8_t)chr);
+        code.push_back((uint8_t)chr);
     }
+    return code;
 }
 
 void BaskVM::exec() {
-    read_consts();
-    read_funcs();
+    WORD size = GET_WORD();
+    vector<BYTE> std = load((char*)"/home/kiran/baskvm/std/a.out");
+    BYTE b0 = std[0];
+    BYTE b1 = std[1];
+    BYTE b2 = std[2];
+    BYTE b3 = std[3];
+    BYTE b4 = std[4];
+    BYTE b5 = std[5];
+    BYTE b6 = std[6];
+    BYTE b7 = std[7];
+    std = vector<BYTE>(std.begin() + 8, std.end());
 
+    for (BYTE byte : std) {
+        code.push_back(byte);
+    }
+    size += COMBINE_8_BYTES(b0, b1, b2, b3, b4, b5, b6, b7);
+    read_funcs(size);
     BaskVM* vm = new BaskVM();
+    if (functions.find("main") == functions.end()) {
+        FAIL << "Cannot locate main function";
+    }
     vm->code = functions["main"];
     vm->name = "main";
     vm->constants = constants;
@@ -71,16 +90,15 @@ void BaskVM::read_labels() {
     }
 }
 
-void BaskVM::read_funcs() {
-    int ip_reset = ip;
-    for (; ip < code.size();) {
+void BaskVM::read_funcs(int num) {
+    for (int i = 0; i < num; i++) {
         string str = read_string();
         WORD length = GET_WORD();
-        vector<BYTE> test = vector<BYTE> (code.begin() + ip, code.begin() + ip + length);
+        vector<BYTE> test = vector<BYTE>(code.begin() + ip, code.begin() + ip + length);
         functions[str] = test;
         ip += length;
     }
-    ip = ip_reset;
+    ip = 0;
 }
 
 
@@ -97,6 +115,7 @@ string BaskVM::read_string() {
 
 void BaskVM::eval()
 {   
+    read_consts();
     read_labels();
     code_start = ip;
     while (true)
@@ -115,7 +134,7 @@ void BaskVM::eval()
                 if (symbol_table.find(name) != symbol_table.end()) {
                     FAIL << "Stack '" << name << "' already exists";
                 }
-                symbol_table[name] = new Stack(this->name + ":" + name);
+                symbol_table[name] = new Stack(name);
             }
             break;
         case OP_SWITCH:
@@ -158,24 +177,11 @@ void BaskVM::eval()
                 BaskVM* vm = new BaskVM();
                 vm->code = functions[name];
                 vm->name = name;
-                vm->default_stack->name = name + ":default";
-                int stack_size = current_stack->size();
-                current_stack->reverse();
-                for (int i = 0; i <= stack_size - 1; i++) {
-                    Value* val = current_stack->pop();
-                    vm->default_stack->push(new Value{val->type, val->data});
-                }
+                vm->default_stack = current_stack;
+                vm->symbol_table["default"] = current_stack;
 
-                current_stack->clear();
-
-                vm->constants = constants;
                 vm->current_stack = vm->default_stack;
                 vm->eval();
-                vm->default_stack->reverse();
-                for (int i = 0; i < vm->default_stack->size(); i++) {
-                    Value* val = vm->default_stack->pop();
-                    current_stack->push(new Value{val->type, val->data});
-                }
                 for (std::map<std::string, Stack*>::iterator i = vm->symbol_table.begin(); i != vm->symbol_table.end(); i++) {
                     if (i->second == vm->default_stack) continue;
                     i->second->clear();
@@ -198,12 +204,24 @@ void BaskVM::eval()
             {
                 string name = read_string();
                 if (symbol_table.find(name) == symbol_table.end()) {
-                    FAIL << "Invalid stack identifier: " << name;
+                    FAIL << "Invalid stack identifier for copy: " << name;
                 }
                 Stack* stack = symbol_table[name];
                 Value* val = stack->pop("Cannot copy from stack '" + name + "' to stack '" + current_stack->name + "' as '" + name + "' is empty");
                 current_stack->push(val);
                 stack->push(val);
+            }
+            break;
+        case OP_CLONE:
+            {
+                string name = read_string();
+                if (symbol_table.find(name) == symbol_table.end()) {
+                    FAIL << "Invalid stack identifier for clone: " << name;
+                }
+                Stack* original = symbol_table[name];
+                for (Value* val : original->stack) {
+                    current_stack->push(new Value{val->type, val->data});
+                }
             }
             break;
         case OP_POP:

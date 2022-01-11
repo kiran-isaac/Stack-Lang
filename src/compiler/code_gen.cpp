@@ -134,6 +134,23 @@ vector<BYTE> Compiler::code_gen(vector<Token> &tokens) {
                     i++;
                 }
                 break;
+            case TokenType::KW_CLONE:
+                {
+                    Token tk2 = tokens[i+1];
+                    ADD(OP_CLONE);
+                    if (tk2.type != TokenType::ID) {
+                        string macro_error = MACRO_ERROR(tk2);
+                        FAIL << "Invalid clone id: " << tk2.val << macro_error;
+                    }
+
+                    for (char chr : tk2.val) {
+                        ADD((uint8_t)chr);
+                    }
+                    // Null Termination
+                    ADD(0x00);
+                    i += 2;
+                }
+                break;
             case TokenType::KW_SWITCH:
                 {
                     Token tk2 = tokens[i+1];
@@ -207,10 +224,15 @@ vector<BYTE> Compiler::code_gen(vector<Token> &tokens) {
         }
     }
 
-    code = get_labels(labels);
+    code = get_constants();
+    constants.clear();
     
-    for (BYTE bte : out) {
-        code.push_back(bte);
+    for (BYTE byte : get_labels(labels)) {
+        code.push_back(byte);
+    }
+
+    for (BYTE byte : out) {
+        code.push_back(byte);
     }
 
     return code;
