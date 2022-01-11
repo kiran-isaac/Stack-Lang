@@ -38,5 +38,6 @@
 
 #define FUNC_CALL_MODE_LOCAL 0x00
 #define FUNC_CALL_MODE_INBUILT 0x01
+#define FUNC_CALL_MODE_MODULE 0x02
 
 #endif

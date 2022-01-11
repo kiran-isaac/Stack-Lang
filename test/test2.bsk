@@ -1,1 +1,9 @@
-"Hello World!" :str_len &num :print
+func testt
+    "Hello World!" &string :print &newline
+endfunc
+
+func test
+    :testt
+endfunc
+
+:test

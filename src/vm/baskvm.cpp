@@ -29,6 +29,7 @@ vector<BYTE> BaskVM::load(char* fname) {
 
 void BaskVM::exec() {
     WORD size = GET_WORD();
+
     vector<BYTE> std = load((char*)"/home/kiran/baskvm/std/a.out");
     BYTE b0 = std[0];
     BYTE b1 = std[1];
@@ -44,6 +45,7 @@ void BaskVM::exec() {
         code.push_back(byte);
     }
     size += COMBINE_8_BYTES(b0, b1, b2, b3, b4, b5, b6, b7);
+    
     read_funcs(size);
     BaskVM* vm = new BaskVM();
     if (functions.find("main") == functions.end()) {
@@ -176,6 +178,7 @@ void BaskVM::eval()
                 string name = read_string();
                 BaskVM* vm = new BaskVM();
                 vm->code = functions[name];
+                vm->functions = functions;
                 vm->name = name;
                 vm->default_stack = current_stack;
                 vm->symbol_table["default"] = current_stack;
@@ -188,6 +191,7 @@ void BaskVM::eval()
                     delete i->second;
                 }
                 delete vm;
+                break;
             }
             break;
         case OP_BRING:

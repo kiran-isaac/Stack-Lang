@@ -124,10 +124,12 @@ vector<BYTE> Compiler::code_gen(vector<Token> &tokens) {
                         } else {
                             ADD(FUNC_CALL_MODE_LOCAL);
                         }
+                    } else {
+                        ADD(FUNC_CALL_MODE_MODULE);
                     }
                     
                     for (char chr : call) {
-                        ADD((uint8_t)chr);
+                        ADD((BYTE)chr);
                     }
                     // Null Termination
                     ADD(0x00);

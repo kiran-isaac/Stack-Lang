@@ -194,6 +194,6 @@ void init_inbuilts() {
     funcMap["exit"]       = &exit;
     funcMap["stack_len"]  = &stack_len;
     funcMap["reverse"]    = &reverse;
-    funcMap["stackID"]    = &StackID;
+    funcMap["stack_id"]    = &StackID;
     funcMap["str_concat"] = &str_concat;
 }

@@ -43,7 +43,7 @@ class Compiler {
 public:
     std::vector<std::string> inbuilts;
 
-    Compiler(char* fname);
+    Compiler(int argc, char *argv[]);
     std::vector<BYTE> compile();
     TokenType match(std::string);
     WORD add_constant(Value val);

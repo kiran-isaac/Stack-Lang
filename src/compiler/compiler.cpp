@@ -8,21 +8,21 @@ string keyword(string kw) {
     return "^(" + kw + "|" + kwUpper + ")$";
 } 
 
-Compiler::Compiler(char* fname) {
-    filename = fname;
-    ifstream file(filename);
+Compiler::Compiler(int argc, char *argv[]) {
+    string arg1 = argv[1];
+    src = "";
 
-    const size_t last_slash_idx = filename.rfind("/");
-    if (string::npos != last_slash_idx)
-    {
-        dir = filename.substr(0, last_slash_idx);
+    fout = ofstream(argv[(arg1 == "compile") ? 2 : 1], ios::binary | ios::out);
+
+    for (size_t i = (arg1 == "compile") ? 3 : 2; i < argc; i++)
+    {   
+        char* name = argv[i];
+        ifstream file(name);
+        char buffer[BUFFER_SIZE] = { 0 };
+        file.read(buffer, BUFFER_SIZE);
+        string str = buffer;
+        src += str + " ";
     }
-
-    char buffer[BUFFER_SIZE];
-    file.read(buffer, BUFFER_SIZE);
-    src = buffer;
-
-    fout = ofstream(dir + "/a.out", ios_base::binary);
 
     constants = vector<Value>();
 
@@ -40,8 +40,8 @@ Compiler::Compiler(char* fname) {
     token_map1[keyword("clone")] = TokenType::KW_CLONE;
     token_map1[keyword("func")] = TokenType::KW_FUNC;
     token_map1[keyword("endfunc")] = TokenType::KW_ENDFUNC;
-    token_map1["^[A-Za-z_]*:[A-Za-z_]+"] = TokenType::FUNC_CALL;
-    token_map1["^[A-Za-z_]+:"] = TokenType::LABEL;
+    token_map1["^:[A-Za-z_][A-Za-z_0-9]+"] = TokenType::FUNC_CALL;
+    token_map1["^[A-Za-z_][A-Za-z_0-9]*:"] = TokenType::LABEL;
     token_map1["^->$"] = TokenType::MACRO_LINE_ROLLOVER;
     token_map1["^\\[$"] = TokenType::REVERSE_START;
     token_map1["^]$"] = TokenType::REVERSE_END;
@@ -99,7 +99,7 @@ Compiler::Compiler(char* fname) {
         "exit",
         "stack_len",
         "reverse",
-        "stackID",
+        "stack_id",
         "str_concat"
     };
 }
