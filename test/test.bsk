@@ -1,0 +1,11 @@
+&cs x [+ 1 'a' 0] "Hello World!"
+
+function local:pop_string 
+    pop_string_loop: x copy 0 == branch end_loop 
+        bring x pop 
+        goto pop_string_loop 
+
+    end_loop: 
+        bring x pop &s x
+
+:pop_string &string :print &newline

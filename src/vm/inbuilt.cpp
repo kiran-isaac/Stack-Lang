@@ -105,28 +105,57 @@ void equal(Stack* stack) {
     stack->push(new BOOL(op1 == op2));
 }
 
+void not_equal(Stack* stack) {
+    double op1 = stack->pop("[Inbuilt Function : !=] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : !=] Cannot pop parameter 1: operand")->d();
+    stack->push(new BOOL(op1 != op2));
+}
+
 void less_than(Stack* stack) {
-    double op1 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 0: operand")->d();
-    double op2 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 1: operand")->d();
+    double op1 = stack->pop("[Inbuilt Function : <] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : <] Cannot pop parameter 1: operand")->d();
     stack->push(new BOOL(op1 < op2));
 }
 
 void greater_than(Stack* stack) {
-    double op1 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 0: operand")->d();
-    double op2 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 1: operand")->d();
+    double op1 = stack->pop("[Inbuilt Function : >] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : >] Cannot pop parameter 1: operand")->d();
     stack->push(new BOOL(op1 > op2));
 }
 
 void greater_than_or_equal(Stack* stack) {
-    double op1 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 0: operand")->d();
-    double op2 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 1: operand")->d();
+    double op1 = stack->pop("[Inbuilt Function : >=] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : >=] Cannot pop parameter 1: operand")->d();
     stack->push(new BOOL(op1 >= op2));
 }
 
 void less_than_or_equal(Stack* stack) {
-    double op1 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 0: operand")->d();
-    double op2 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 1: operand")->d();
+    double op1 = stack->pop("[Inbuilt Function : <=] Cannot pop parameter 0: operand")->d();
+    double op2 = stack->pop("[Inbuilt Function : <=] Cannot pop parameter 1: operand")->d();
     stack->push(new BOOL(op1 <= op2));
+}
+
+void bool_and(Stack* stack) {
+    bool op1 = stack->pop("[Inbuilt Function : &&] Cannot pop parameter 0: operand")->b();
+    bool op2 = stack->pop("[Inbuilt Function : &&] Cannot pop parameter 1: operand")->b();
+    stack->push(new BOOL(op1 && op2));
+}
+
+void bool_or(Stack* stack) {
+    bool op1 = stack->pop("[Inbuilt Function : ||] Cannot pop parameter 0: operand")->b();
+    bool op2 = stack->pop("[Inbuilt Function : ||] Cannot pop parameter 1: operand")->b();
+    stack->push(new BOOL(op1 || op2));
+}
+
+void bool_xor(Stack* stack) {
+    bool op1 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 0: operand")->b();
+    bool op2 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 1: operand")->b();
+    stack->push(new BOOL(op1 && !op2 || op2 && !op1));
+}
+
+void bool_not(Stack* stack) {
+    bool op1 = stack->pop("[Inbuilt Function : !] Cannot pop parameter 0: operand")->b();
+    stack->push(new BOOL(!op1));
 }
 
 void exit(Stack* stack) {
@@ -139,20 +168,30 @@ void exit(Stack* stack) {
 }
 
 void init_inbuilts() {
-    funcMap["print"]      = &print;
-    funcMap["exit"]       = &exit;
+    // Mathmatical
     funcMap["add"]        = &add;
     funcMap["sub"]        = &sub;
     funcMap["mul"]        = &mul;
     funcMap["div"]        = &div;
     funcMap["pow"]        = &pow;
 
+    // Comparisons
     funcMap["equal"]      = &equal;
+    funcMap["not_equal"]  = &not_equal;
     funcMap["lt"]         = &less_than;
     funcMap["gt"]         = &greater_than;
     funcMap["lte"]        = &less_than_or_equal;
     funcMap["gte"]        = &greater_than_or_equal;
 
+    // Boolean
+    funcMap["not"]        = &bool_not;
+    funcMap["and"]        = &bool_and;
+    funcMap["xor"]        = &bool_xor;
+    funcMap["or"]         = &bool_or;
+
+    // Other
+    funcMap["print"]      = &print;
+    funcMap["exit"]       = &exit;
     funcMap["stack_len"]  = &stack_len;
     funcMap["reverse"]    = &reverse;
     funcMap["stackID"]    = &StackID;

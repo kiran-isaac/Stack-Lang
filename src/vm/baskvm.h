@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <iterator>
 #include <fstream>
+#include <cstdio>
 #include "../datatypes.h"
 #include "../byte_ops.h"
 #include "../opcode.h"
@@ -30,18 +31,21 @@ public:
     std::string read_string();
     void load(char* fname);
     void exec();
-    void read_const();
-    void read_label();
+    void read_consts();
+    void read_labels();
+    void read_funcs();
     void eval();
 
     BYTE read_byte();
 
+    std::string name;
     WORD ip;
     WORD code_start;
-    std::map<std::string, uint64_t>* labels;
+    std::map<std::string, uint64_t> labels;
     Stack* default_stack;
     Stack* current_stack;
-    std::map<std::string, Stack*>* symbol_table;
+    std::map<std::string, Stack*> symbol_table;
+    std::map<std::string, std::vector<BYTE>> functions;
 
     std::vector<Value *> constants;
     std::vector<BYTE> code;

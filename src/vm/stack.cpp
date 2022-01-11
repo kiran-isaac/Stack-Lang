@@ -6,12 +6,23 @@ Stack::Stack(string name) {
     this->name = name;
 }
 
+Stack::Stack(string name, Stack clone) {
+    this->name = name;
+}
+
 int Stack::size() {
     return stack.size();
 }
 
 void Stack::reverse() {
     std::reverse(stack.begin(), stack.end());
+}
+
+void Stack::clear() {
+    for (Value* val : stack) {
+        delete val;
+    }
+    stack.clear();
 }
 
 void Stack::push(Value* value) {

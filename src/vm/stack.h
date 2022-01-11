@@ -8,18 +8,18 @@
 #include "logger.h"
 
 class Stack {
-private:
+public:
     std::vector<Value*> stack;
 
-public:
     std::string name;
 
     Stack(std::string name);
+    Stack(std::string name, Stack clone);
 
     int size();
 
     void reverse();
-
+    void clear();
     void push(Value* value);
 
     Value* pop(std::string error = "Nothing to pop from stack");

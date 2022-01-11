@@ -1,0 +1,5 @@
+func multiply
+    *
+endfunc
+
+1 8 :multiply &num :print
