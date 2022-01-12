@@ -3,9 +3,9 @@
 &cs z 0
 &cs i 0
 
-#MACRO &n 10000
+#MACRO &n 20
 
-loop: &sd copy z &n < branch endloop
+loop: &sd copy i &n < branch endloop
     &s i dup &num :print [+ 1]
     " : " &string :print
     copy z &num :print &newline

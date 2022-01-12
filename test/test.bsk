@@ -1,2 +1,0 @@
-#MACRO &test "Hello " "World!" :str_len :shift_n &string :print &string :print &newline
-&test
