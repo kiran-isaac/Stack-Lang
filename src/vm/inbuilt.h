@@ -5,6 +5,8 @@
 #include <map>
 #include <cmath>
 #include <limits>
+#include <ctime>
+#include <time.h>
 #include "values.h"
 #include "stack.h"
 #include "../byte_ops.h"

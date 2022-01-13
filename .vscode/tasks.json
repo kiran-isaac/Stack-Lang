@@ -15,7 +15,7 @@
         {
             "label": "compile",
             "type": "shell",
-            "command": "./baskvm",
+            "command": "./bask",
             "args": ["compile", "${workspaceFolder}/test/test.basm"],
             "options": {
                 "cwd": "${workspaceFolder}/build"

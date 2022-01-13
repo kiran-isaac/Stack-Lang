@@ -5,3 +5,5 @@ endfunc
 func test
     :testt
 endfunc
+
+:test

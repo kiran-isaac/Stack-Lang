@@ -100,7 +100,9 @@ Compiler::Compiler(int argc, char *argv[]) {
         "stack_len",
         "reverse",
         "stack_id",
-        "str_concat"
+        "str_concat",
+        "start_timer",
+        "end_timer"
     };
 }
 
