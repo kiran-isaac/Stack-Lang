@@ -68,6 +68,22 @@ void str_concat(Stack* stack) {
     push_string(stack, str1 + str2);
 }
 
+void start_timer(Stack* stack) {
+    struct timespec ts;
+    timespec_get(&ts, TIME_UTC);
+    double start = ts.tv_sec;
+    stack->push(new NUMBER(start));
+}
+
+void end_timer(Stack* stack) {
+    double start = stack->pop("[Inbuilt Function : end_timer] Cannot pop the start time")->d();
+    struct timespec ts;
+    timespec_get(&ts, TIME_UTC);
+    double end = ts.tv_sec;
+    double delta = double(end - start);
+    stack->push(new NUMBER(delta));
+}
+
 void add(Stack* stack) {
     double op1 = stack->pop("[Inbuilt Function : +] Cannot pop parameter 0: operand")->d();
     double op2 = stack->pop("[Inbuilt Function : +] Cannot pop parameter 1: operand")->d();
@@ -195,4 +211,6 @@ void init_inbuilts() {
     funcMap["reverse"]    = &reverse;
     funcMap["stack_id"]    = &StackID;
     funcMap["str_concat"] = &str_concat;
+    funcMap["start_timer"] = &start_timer;
+    funcMap["end_timer"]   = &end_timer;
 }

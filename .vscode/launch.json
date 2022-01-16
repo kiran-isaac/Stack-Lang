@@ -59,13 +59,12 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/bask",
-            "args": [ "${workspaceFolder}/test/a.out", "${workspaceFolder}/test/test2.bsk", "${workspaceFolder}/test/test3.bsk"],
+            "args": ["${workspaceFolder}/test/a.out", "${workspaceFolder}/test/test.bsk"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "preLaunchTask": "compile",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
