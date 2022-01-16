@@ -34,6 +34,7 @@ vector<BYTE> BaskVM::load(const char* fname) {
 void BaskVM::exec() {
     WORD n = GET_WORD();
     read_funcs(n);
+    cout << n ;
     if (functions.find("main") == functions.end()) {
         FAIL << "Cannot locate main function";
     }

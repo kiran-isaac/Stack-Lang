@@ -16,7 +16,6 @@ func factorial_loop
         &sd pop bring accumulate
 endfunc
 
-:start_timer
 100 :factorial_recur &num :print &newline
-:end_timer &num :print
+
 10 :factorial_loop &num :print &newline

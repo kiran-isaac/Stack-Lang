@@ -1,4 +1,5 @@
 #include "compiler.h"
+#include "../input_parser.h"
 
 using namespace std;
 
@@ -8,20 +9,21 @@ string keyword(string kw) {
     return "^(" + kw + "|" + kwUpper + ")$";
 } 
 
-Compiler::Compiler(int argc, char *argv[]) {
-    string arg1 = argv[1];
+Compiler::Compiler(string output, vector<string> inputs) {
     src = "";
 
-    fout = ofstream(argv[(arg1 == "compile") ? 2 : 1], ios::binary | ios::out);
+    if (output != "") {
+        fout = ofstream(output);
+    }
 
-    for (size_t i = (arg1 == "compile") ? 3 : 2; i < argc; i++)
+    for (string input : inputs)
     {   
-        char* name = argv[i];
-        ifstream file(name);
+        ifstream file(input);
         char buffer[BUFFER_SIZE] = { 0 };
         file.read(buffer, BUFFER_SIZE);
         string str = buffer;
         src += str + " ";
+        file.close();
     }
 
     constants = vector<Value>();
@@ -106,6 +108,33 @@ Compiler::Compiler(int argc, char *argv[]) {
     };
 }
 
+std::vector<BYTE> readFile(const char* filename)
+{
+    // open the file:
+    std::ifstream file(filename, std::ios::binary);
+
+    // Stop eating new lines in binary mode!!!
+    file.unsetf(std::ios::skipws);
+
+    // get its size:
+    std::streampos fileSize;
+
+    file.seekg(0, std::ios::end);
+    fileSize = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    // reserve capacity
+    std::vector<BYTE> vec;
+    vec.reserve(fileSize);
+
+    // read the data:
+    vec.insert(vec.begin(),
+               std::istream_iterator<BYTE>(file),
+               std::istream_iterator<BYTE>());
+
+    return vec;
+}
+
 std::vector<BYTE> Compiler::compile() {
     extract_macros();
     remove_directives();
@@ -119,8 +148,39 @@ std::vector<BYTE> Compiler::compile() {
     vector<BYTE> output;
     vector<BYTE> out;
     vector<BYTE> fn_code;
-    WORD size = functions.size();
-    ADD_WORD(size);
+
+    WORD size = 0;
+    size += functions.size();
+
+    if (stdlib != "") {
+        std::vector<BYTE> v2 = readFile(stdlib.c_str());
+        WORD stdlib_size = COMBINE_8_BYTES(
+            v2[0], 
+            v2[1], 
+            v2[2], 
+            v2[3], 
+            v2[4], 
+            v2[5], 
+            v2[6], 
+            v2[7]
+            );
+        WORD x = size + stdlib_size;
+        ADD_WORD(x);
+        v2.erase(v2.begin());
+        v2.erase(v2.begin());
+        v2.erase(v2.begin());
+        v2.erase(v2.begin());
+        v2.erase(v2.begin());
+        v2.erase(v2.begin());
+        v2.erase(v2.begin());
+        v2.erase(v2.begin());
+        for (BYTE byte : v2) {
+            out.push_back(byte);
+        }
+    } else {
+        ADD_WORD(size);
+    }
+
     for (map<string, vector<Token>>::iterator i = functions.begin(); i != functions.end(); i++) {
         fn_code = code_gen(i->second);
         
@@ -145,5 +205,6 @@ std::vector<BYTE> Compiler::compile() {
     }
 
     fout.close();
+
     return output;
 }

@@ -57,6 +57,14 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "codecvt": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "strstream": "cpp",
+        "complex": "cpp",
+        "list": "cpp",
+        "set": "cpp",
+        "thread": "cpp",
+        "cfenv": "cpp",
+        "typeindex": "cpp",
+        "variant": "cpp"
     }
 }
