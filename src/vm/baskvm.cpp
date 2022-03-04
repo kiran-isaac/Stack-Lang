@@ -4,7 +4,7 @@ using namespace std;
 
 BYTE BaskVM::read_byte() {
     ip++;
-    return code[ip - 1];
+    return code [ip - 1];
 }
 
 BaskVM::BaskVM() {
@@ -49,7 +49,6 @@ void BaskVM::exec(int argc, char *argv[]) {
     BYTE b5 = std[5];
     BYTE b6 = std[6];
     BYTE b7 = std[7];
-
 
     std = vector<BYTE>(std.begin() + 8, std.end());
 

@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/bask",
-            "args": ["-s", "-o", "test.out", "-i", "/home/kiran/baskvm/test/test.bsk"],
+            "args": ["-s", "-o", "test.out", "-i", "/home/kiran/dev/baskvm/test/factorial.bsk"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build",
             "environment": [],

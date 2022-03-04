@@ -56,9 +56,7 @@ int main(int argc, char *argv[]) {
         return 0;
     } else {
         Compiler compiler(out, inputs);
-        BaskVM vm = BaskVM();
-        vm.code = compiler.compile();
-        vm.exec(argc, argv);
+        compiler.compile();
     }
     return 0;
 }

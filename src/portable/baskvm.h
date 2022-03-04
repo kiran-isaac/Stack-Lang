@@ -11,14 +11,14 @@
 #include <fstream>
 #include <cstdio>
 #include <filesystem>
-#include "../../datatypes.h"
-#include "../../byte_ops.h"
-#include "../../opcode.h"
-#include "../stack.h"
-#include "../logger.h"
+#include "../datatypes.h"
+#include "../byte_ops.h"
+#include "../opcode.h"
+#include "../vm/stack.h"
+#include "../vm/logger.h"
 #include "../../values.h"
-#include "../inbuilt.h"
-#include "../../input_parser.h"
+#include "../vm/inbuilt.h"
+#include "../input_parser.h"
 
 // 10kB
 #define BUFFER_SIZE 1024 * 10
