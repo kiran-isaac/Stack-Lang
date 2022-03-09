@@ -1,6 +1,7 @@
 all:
-	cd build && make
-	cd src/portable && make build
+	@cd build && make && rm -f /usr/bin/bask && ln bask /usr/bin
+	cd src/portable && sudo make build
+	@cd std && make
 
 fib:
 	make all

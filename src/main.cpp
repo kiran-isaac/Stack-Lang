@@ -13,8 +13,8 @@ int main(int argc, char *argv[]) {
 
     desc.add_options()
 		("help", "produce help message")
-        ("compile,c", "mode compile")
-        ("run,r", "mode compile")
+        ("compile,c", "mode compile (can be used with run)")
+        ("run,r", "mode run (can be used with compile)")
         ("standalone,s", "create standalone executable")
 		("out,o", value<string>(&out), "output file name")
         ("std", value<string>(&lib)->default_value("/usr/lib/bask/stdlib"), "standard library location")
@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
     variables_map vm{};
 	store(parse_command_line(argc, argv, desc), vm);
     notify(vm);
+
     if (vm.size() == 0 || vm.count("help"))
 	{
 		cout << desc << "\n";
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]) {
         }
 
         system("ld -o binary.o -r -b binary a.out");
-        system(("g++ -o " + out + " binary.o " + string(filesystem::path(dest).parent_path()) + string("/bask_portable")).c_str());
+        system(("g++ -o " + out + " binary.o /usr/lib/bask/bask_portable").c_str());
         system("rm *.o");
         system("rm a.out");
 
