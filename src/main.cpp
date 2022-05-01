@@ -24,6 +24,8 @@ int main(int argc, char *argv[]) {
 	store(parse_command_line(argc, argv, desc), vm);
     notify(vm);
 
+    if (vm.count("compile") == vm.count("standalone") == 0) return 1;
+
     if (vm.size() == 0 || vm.count("help"))
 	{
 		cout << desc << "\n";

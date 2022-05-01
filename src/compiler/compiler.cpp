@@ -1,5 +1,4 @@
 #include "compiler.h"
-#include "../input_parser.h"
 
 using namespace std;
 

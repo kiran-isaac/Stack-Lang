@@ -29,10 +29,6 @@ vector<BYTE> BaskVM::load(const char* fname) {
 
 void BaskVM::exec(int argc, char *argv[]) {
     string std_path = "/usr/lib/bask/stdlib";
-    InputParser input(argc, argv);
-    if (input.cmdOptionExists("-std")) {
-        std_path = input.getCmdOption("-std");
-    }
 
     WORD size = GET_WORD();
 
