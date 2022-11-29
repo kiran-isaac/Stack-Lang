@@ -82,12 +82,14 @@
             "name": "Debug Portable",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test.exe",
-            "stopAtEntry": true,
+            "program": "${workspaceFolder}/build/bask",
+            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
+            "args": ["-s", "-o", "test.out", "-i", "test/factorial.bsk"],
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
+            "preLaunchTask": "build",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
