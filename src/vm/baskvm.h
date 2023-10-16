@@ -18,6 +18,7 @@
 #include "logger.h"
 #include "../values.h"
 #include "inbuilt.h"
+#include "../config.h"
 
 // 10kB
 #define BUFFER_SIZE 1024 * 10
@@ -31,7 +32,7 @@ public:
 
     std::string read_string();
     std::vector<BYTE> load(const char* fname);
-    void exec(int argc, char *argv[]);
+    void exec(BSKConfig* config);
     void read_consts();
     void read_labels();
     void read_funcs(int num);

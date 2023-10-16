@@ -1,5 +1,5 @@
 all:
-	../build/bask -c -o a.out -i stack.bsk str.bsk
+	../build/bask compile -o a.out stack.bsk str.bsk
 	rm -f /usr/lib/bask/stdlib
 	rm -f -r /usr/lib/bask
 	mkdir /usr/lib/bask

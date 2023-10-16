@@ -18,4 +18,4 @@ endfunc
 
 10 :factorial_recur &num :print &newline
 
-100 :factorial_loop &num :print &newline
+10 :factorial_loop &num :print &newline

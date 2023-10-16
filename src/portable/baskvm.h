@@ -18,7 +18,6 @@
 #include "../vm/logger.h"
 #include "../../values.h"
 #include "../vm/inbuilt.h"
-#include "../input_parser.h"
 
 // 10kB
 #define BUFFER_SIZE 1024 * 10

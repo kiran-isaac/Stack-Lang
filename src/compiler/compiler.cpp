@@ -8,14 +8,14 @@ string keyword(string kw) {
     return "^(" + kw + "|" + kwUpper + ")$";
 } 
 
-Compiler::Compiler(string output, vector<string> inputs) {
+Compiler::Compiler(BSKConfig* config) {
     src = "";
 
-    if (output != "") {
-        fout = ofstream(output);
+    if (config->out != "") {
+        fout = ofstream(config->out);
     }
 
-    for (string input : inputs)
+    for (string input : config->inputs)
     {   
         ifstream file(input);
         char buffer[BUFFER_SIZE] = { 0 };

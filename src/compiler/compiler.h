@@ -15,6 +15,7 @@
 #include "logger.h"
 #include "../opcode.h"
 #include "string_ops.h"
+#include "../config.h"
 
 // 10kB
 #define BUFFER_SIZE 1024 * 10
@@ -43,8 +44,7 @@ class Compiler {
 public:
     std::vector<std::string> inbuilts;
 
-    Compiler(std::string output, std::vector<std::string> inputs);
-    Compiler(std::string output, std::vector<std::string> inputs, std::string stdlib);
+    Compiler(BSKConfig *config);
     std::vector<BYTE> compile();
     std::string stdlib;
     TokenType match(std::string);
