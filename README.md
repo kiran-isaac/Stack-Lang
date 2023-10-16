@@ -1,22 +1,16 @@
 # Bask
 
-Bask is a stack based programming language, that compiles to bytecode and is then run using the bask vm (for now the compiler and the vm are part of the same executable). It does not yet have support for functions, however it does support macros. 
+Bask is a stack based programming language, that compiles to bytecode and is then run using the bask vm. 
 
 This project is in very early stages. It has currently only been tested on Ubuntu. I will update this in the future with windows build instructions and/or releases.
 
-Bask has some similarities to forth, but:
-- Multiple stacks
-- Ability to create "scoped stacks", which are deleted after a function has finished executing
-
 ## Usage
 
-A bask program is compiled to bytecode which is interpreted by the bask virtual machine. A bask program called "main.bsk" would be compiled and output to "main.bsk.byte", and then run by the virtual machine using the command below. 
+A bask program is compiled to bytecode which is interpreted by the bask virtual machine. A bask program called "main.bsk" would be compiled and output to "main.out", and then run by the virtual machine using the command below. 
 
 ```bash
-bask main.bsk.byte main.bsk
+bask compile main.bsk -o a.out
 ```
-
-The CLI will be updated. 
 
 ## Building the Standard Library
 The bask virtual machine needs a referance to the standard library, which is written in bask compiled as bask bytecode. This can be achieved by using the -std argument, or by putting the lib at /usr/lib/bask/stdlib where the program will automatically search.
@@ -24,7 +18,7 @@ The bask virtual machine needs a referance to the standard library, which is wri
 The standard library can be compiled using:
 ```bash
 cd std
-bask compile /usr/lib/bask/stdlib stack.bsk str.bsk
+bask compile -o /usr/lib/bask/stdlib stack.bsk str.bsk
 ```
 
 More standard library modules will be added in future
