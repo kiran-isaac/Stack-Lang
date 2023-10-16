@@ -35,7 +35,7 @@ public:
     void read_consts();
     void read_labels();
     void read_funcs(int num);
-    void eval();
+    void run();
 
     BYTE read_byte();
 

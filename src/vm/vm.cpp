@@ -68,7 +68,7 @@ void VM::exec(BSKConfig* config) {
   vm->name = "main";
   vm->constants = constants;
   vm->functions = functions;
-  vm->eval();
+  vm->run();
   delete vm;
   return;
 }
@@ -124,7 +124,7 @@ string VM::read_string() {
   return bytes_to_string(bytes);
 }
 
-void VM::eval() {
+void VM::run() {
   read_consts();
   read_labels();
   code_start = ip;
@@ -159,6 +159,8 @@ void VM::eval() {
       } break;
       case OP_BRANCH: {
         string name = read_string();
+
+        // If the top value on the stack is 0, do nothing, otherwise branch
         if (!(current_stack->pop("Cannot pop branch conditional value")->b()))
           continue;
 
@@ -182,7 +184,7 @@ void VM::eval() {
             vm->symbol_table["default"] = current_stack;
 
             vm->current_stack = vm->default_stack;
-            vm->eval();
+            vm->run();
             for (std::map<std::string, Stack*>::iterator i =
                      vm->symbol_table.begin();
                  i != vm->symbol_table.end(); i++) {

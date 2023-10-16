@@ -49,6 +49,13 @@ sudo mv stdlib /usr/lib/slang/stdlib
 More standard library modules will be added in future
 
 # Programming in Slang
+## Syntax
+
+Slang is a stack based programming language. This means that all operations are performed on a stack. The stack is a LIFO (last in first out) data structure. The last thing to be pushed onto the stack is the first thing to be popped off of the stack.
+
+Slang is a whitespace insensitive language. This means that whitespace is ignored, and the only way to separate tokens is by using a space. 
+
+Slang is a postfix language. This means that the operator comes after the operands. For example, in the expression 1 + 2, the operator is +, and the operands are 1 and 2. In Slang, this would be written as 1 2 +. The only exception to this is the name of any stacks being operated on, which comes after the operator (I know this is confusing, but it makes sense when you see it in action).
 
 A Slang program consists of a set of functions. Everything outside a function definition is treated as if it is part of the main function. There cannot be two main functions, or two functions of the same name. Below is a basic Slang program.
 
@@ -58,19 +65,38 @@ A Slang program consists of a set of functions. Everything outside a function de
 - 10 : push 10 onto the stack
 - dup : duplicate the last thing on the stack
 - \* : multiply the last thing on the stack
-- &num : is a macro, that expands to the data type value code, which in this case is 0. This (of course) is pushed to the stack.
+- &num : is a macro, that expands to the data type value code, which in this case is 0. This (of course) is pushed to the stack.  See the section on data types for more information.
 - :print : a function call to the inbuilt "print" function, which will pop the last value off of the stack, and as it is 0 (representing a number) it pops another item off the stack and prints it as if it was a number.
 
-The program outputs 100. 
+The program outputs 100.
 
-If the program was changed to look like this:
-```
-10 dup * &char :print
-```
-It would output "d" to the console.
+### Keywords
+Stack manipulation:
+- create [stackname] : creates a new stack
+- switch [stackname] : switches to the specified stack
+- Bring [stackname] : brings the top item in the specified stack to the current stack
+- copy [stackname] : copies the top item in the specified stack to the current stack
+- clone [stackname] : clones all the items in the specified stack and puts them the current stack in the same order they were in in the original stack
+- pop [stackname] : pops the top item off of the specified stack
+- dup : duplicates the top item on the stack
+
+Control flow:
+- branch [label] : if the top item on the stack is not 0 (i.e. it evaluates to true), jump to the specified label.
+- goto [label] : jump to the specified label
+
+### Data Types
+The first argument to many programms is the data type it is intended to operate on. This is because Slang is a dynamically typed language, and the data type of the last thing on the stack is not known at compile time. 
+
+The 4 data types are:
+- 0 | &num : num
+- 1 | &char : char
+- 2 | &bool : bool
+- 3 | &string : string
+
+The numbers themselves can be used instead of the macros, but the macros are recommended as they are easier to read. (See the section on macros for more information)
 
 ## Stacks
-Slang has a concept of stacks. The default stack is the one that is used when no other stack is specified. The current stack can be 
+Slang (stack lang) suprisinly is mostly based on stacks. The default stack is the one that is used when no other stack is specified. A stack can contain any of the 4 data types, and can be created using the &c macro.
 
 ## Macros
 Users can define macros using the #MACRO keyword, followed by the id of the macro (starting with &). Macros are "expanded" by the preprocesser. 

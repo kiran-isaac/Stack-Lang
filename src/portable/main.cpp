@@ -41,7 +41,7 @@ void VM::exec() {
     name = "main";
     constants = constants;
     functions = functions;
-    eval();
+    run();
 }
 
 int main() {
@@ -110,7 +110,7 @@ string VM::read_string() {
     return bytes_to_string(bytes);
 }
 
-void VM::eval()
+void VM::run()
 {   
     read_consts();
     read_labels();
@@ -179,7 +179,7 @@ void VM::eval()
                 vm->symbol_table["default"] = current_stack;
 
                 vm->current_stack = vm->default_stack;
-                vm->eval();
+                vm->run();
                 for (std::map<std::string, Stack*>::iterator i = vm->symbol_table.begin(); i != vm->symbol_table.end(); i++) {
                     if (i->second == vm->default_stack) continue;
                     i->second->clear();
