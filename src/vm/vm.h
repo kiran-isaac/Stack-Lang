@@ -25,10 +25,10 @@
 
 #define GET_CONSTANT() constants[GET_WORD()]
 
-class BaskVM
+class VM
 {
 public:
-    BaskVM();
+    VM();
 
     std::string read_string();
     std::vector<BYTE> load(const char* fname);

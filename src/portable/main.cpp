@@ -1,4 +1,4 @@
-#include "baskvm.h"
+#include "vm.h"
 
 using namespace std;
 
@@ -6,12 +6,12 @@ extern char _binary_a_out_start[];
 extern char _binary_a_out_end[];
 extern int _binary_a_out_size;
 
-BYTE BaskVM::read_byte() {
+BYTE VM::read_byte() {
     ip++;
     return code[ip - 1];
 }
 
-BaskVM::BaskVM() {
+VM::VM() {
     ip = 0;
     default_stack = new Stack("default");
     current_stack = default_stack;
@@ -20,7 +20,7 @@ BaskVM::BaskVM() {
     init_inbuilts();
 }
 
-vector<BYTE> BaskVM::load(const char* fname) {
+vector<BYTE> VM::load(const char* fname) {
     vector<BYTE> code;
     char buffer[BUFFER_SIZE];
     ifstream file(fname, ios::in | ios::binary);
@@ -31,7 +31,7 @@ vector<BYTE> BaskVM::load(const char* fname) {
     return code;
 }
 
-void BaskVM::exec() {
+void VM::exec() {
     WORD n = GET_WORD();
     read_funcs(n);
     if (functions.find("main") == functions.end()) {
@@ -45,7 +45,7 @@ void BaskVM::exec() {
 }
 
 int main() {
-    BaskVM* vm = new BaskVM();
+    VM* vm = new VM();
     for (char* p = _binary_a_out_start; p != _binary_a_out_end; ++p) {
         vm->code.push_back((BYTE)*p);
     }
@@ -55,7 +55,7 @@ int main() {
     return 0;
 }
 
-void BaskVM::read_consts() {
+void VM::read_consts() {
     WORD const_num = GET_WORD();
     for (int i = 0; i < const_num; i++) {
         switch (read_byte()) {
@@ -75,7 +75,7 @@ void BaskVM::read_consts() {
     }
 }
 
-void BaskVM::read_labels() {
+void VM::read_labels() {
     WORD const_num = GET_WORD();
     for (int i = 0; i < const_num; i++) {
         string str = read_string();
@@ -87,7 +87,7 @@ void BaskVM::read_labels() {
     }
 }
 
-void BaskVM::read_funcs(int num) {
+void VM::read_funcs(int num) {
     for (int i = 0; i < num; i++) {
         string str = read_string();
         WORD length = GET_WORD();
@@ -99,7 +99,7 @@ void BaskVM::read_funcs(int num) {
 }
 
 
-string BaskVM::read_string() {
+string VM::read_string() {
     BYTE byte;
     vector<BYTE> bytes;
     do {
@@ -110,7 +110,7 @@ string BaskVM::read_string() {
     return bytes_to_string(bytes);
 }
 
-void BaskVM::eval()
+void VM::eval()
 {   
     read_consts();
     read_labels();
@@ -171,7 +171,7 @@ void BaskVM::eval()
                 break;
             case FUNC_CALL_MODE_LOCAL:
                 string name = read_string();
-                BaskVM* vm = new BaskVM();
+                VM* vm = new VM();
                 vm->code = functions[name];
                 vm->functions = functions;
                 vm->name = name;

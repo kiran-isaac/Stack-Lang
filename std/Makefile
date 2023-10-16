@@ -1,6 +1,6 @@
 all:
-	../build/bask compile -o a.out stack.bsk str.bsk
-	rm -f /usr/lib/bask/stdlib
-	rm -f -r /usr/lib/bask
-	mkdir /usr/lib/bask
-	ln a.out /usr/lib/bask/stdlib
+	../build/slang compile -o a.out stack.sl str.sl
+	rm -f /usr/lib/slang/stdlib
+	rm -f -r /usr/lib/slang
+	mkdir /usr/lib/slang
+	ln a.out /usr/lib/slang/stdlib

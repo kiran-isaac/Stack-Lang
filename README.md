@@ -1,31 +1,34 @@
-# Bask
+# Slang
 
-Bask is a stack based programming language, that compiles to bytecode and is then run using the bask vm. 
-
-This project is in very early stages. It has currently only been tested on Ubuntu. I will update this in the future with windows build instructions and/or releases.
+Slang is a stack based programming language, that is bytecode interpreted. It is absolutely awful and very difficult to write, it is not recommended to use this for anything other than messing around.
 
 ## Usage
 
-A bask program is compiled to bytecode which is interpreted by the bask virtual machine. A bask program called "main.bsk" would be compiled and output to "main.out", and then run by the virtual machine using the command below. 
+A Slang program is compiled to bytecode which is interpreted by the Slang virtual machine. A Slang program called "main.sl" would be compiled and output to "main.out", and then run by the virtual machine using the command below. 
 
 ```bash
-bask compile main.bsk -o a.out
+slang compile main.sl -o a.out
+```
+
+More information on the Slang CLI can be found by running:
+```bash
+slang help
 ```
 
 ## Building the Standard Library
-The bask virtual machine needs a referance to the standard library, which is written in bask compiled as bask bytecode. This can be achieved by using the -std argument, or by putting the lib at /usr/lib/bask/stdlib where the program will automatically search.
+Slang has a standard library compiled as Slang bytecode. This can be achieved by using the -std argument, or by putting the lib at /usr/lib/Slang/stdlib where the program will automatically search.
 
 The standard library can be compiled using:
 ```bash
 cd std
-bask compile -o /usr/lib/bask/stdlib stack.bsk str.bsk
+Slang compile -o /usr/lib/Slang/stdlib stack.sl str.sl
 ```
 
 More standard library modules will be added in future
 
-# Programming in Bask
+# Programming in Slang
 
-A bask program consists of a set of functions. Everything outside a function definition is treated as if it is part of the main function. There cannot be two main functions, or two functions of the same name. Below is a basic bask program.
+A Slang program consists of a set of functions. Everything outside a function definition is treated as if it is part of the main function. There cannot be two main functions, or two functions of the same name. Below is a basic Slang program.
 
 ```
 10 dup * &num :print 
@@ -44,12 +47,14 @@ If the program was changed to look like this:
 ```
 It would output "d" to the console.
 
+## Stacks
+Slang has a concept of stacks. The default stack is the one that is used when no other stack is specified. The current stack can be 
 
 ## Macros
 Users can define macros using the #MACRO keyword, followed by the id of the macro (starting with &). Macros are "expanded" by the preprocesser. 
 
 The example program from above can be modified to use macros.
-```
+```swift
 #MACRO &square dup *
 #MACRO &print_num &num :print 
 
@@ -68,11 +73,11 @@ The language includes some macros to make common activities easier to read and w
 - &newline : outputs a newline to the console
 
 ## Functions
-Bask functions are created using the func and endfunc keywords. The currently active stack in the current scope becomes the default. 
+Slang functions are created using the func and endfunc keywords. The currently active stack in the current scope becomes the default. 
 
 Below are two definitions of a factorial function.
 
-```
+```swift
 func factorial_recur
 // n -- n`
     dup 1 >= branch end
@@ -98,4 +103,4 @@ endfunc
 // Outputs 362800
 ```
 
-Note the forth-style comments in the function, saying that it eats one value, and pushes a new value
+Note the (some could call them type annotation) comments in the function, saying that it eats one value, and pushes a new value

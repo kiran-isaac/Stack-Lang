@@ -6,30 +6,25 @@ enum LAST_ARG {
   LIB
 };
 
-int verify_filename(char *fname) {
+void verify_filename(char *fname) {
   int len = strlen(fname);
-  if (len < 4) {
-    return 0;
-  }
 
-  File *file = new File();
-  file->name = fname;
-
+  // File *file = new File();
+  // file->name = fname;
   
-  // Check if the file is a bytecode file
-  file->is_bytecode = fname[len - 1] != 'k' || fname[len - 2] != 's' || fname[len - 3] != 'b' || fname[len - 4] != '.';
+  // // Check if the file is a bytecode file
+  // file->is_bytecode = fname[len - 1] != 'l' || fname[len - 2] != 's' || fname[len - 3] != '.';
 
   // Check if the file exists
   std::ifstream file_stream(fname);
   if (!file_stream.good()) {
     std::cout << "File '" << fname << "' does not exist" << std::endl;
+    exit(1);
   }
-
-  return 1;
 }
 
 void help() {
-  std::cout << "Usage: bask [mode] [options] <file>" << std::endl;
+  std::cout << "Usage: slang [mode] [options] <file>" << std::endl;
   std::cout << "Modes:" << std::endl;
   std::cout << "  compile\tCompile the file" << std::endl;
   std::cout << "  run\t\tRun the file" << std::endl;
@@ -47,7 +42,7 @@ void help() {
 BSKConfig *parse_args(int argc, char *argv[]) {
   BSKConfig *config = new BSKConfig();
   config->out = "a.out";
-  config->lib = "/usr/lib/bask/stdlib";
+  config->lib = "/usr/lib/slang/stdlib";
 
   if (argc < 2) {
     help();

@@ -2,7 +2,7 @@
 #include <cstdio>
 #include "compiler/compiler.h"
 #include "config.h"
-#include "vm/baskvm.h"
+#include "vm/vm.h"
 
 using namespace std;
 
@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 
   if (config->mode == Mode::RUN)
   {
-    BaskVM vm{};
+    VM vm{};
     vm.exec(config);
     return 0;
   } else if (config->mode == Mode::COMPILE) {
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     }
 
     system("ld -o binary.o -r -b binary a.out");
-    system(("g++ -o " + config->out + " binary.o /usr/lib/bask/bask_portable").c_str());
+    system(("g++ -o " + config->out + " binary.o /usr/lib/slang/slang_portable").c_str());
     system("rm *.o");
     system("rm a.out");
 
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
   //   }
 
   //   system("ld -o binary.o -r -b binary a.out");
-  //   system(("g++ -o " + out + " binary.o /usr/lib/bask/bask_portable").c_str());
+  //   system(("g++ -o " + out + " binary.o /usr/lib/slang/slang_portable").c_str());
   //   system("rm *.o");
   //   system("rm a.out");
 
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
   // }
   // else if (vm.count("run") != 0)
   // {
-  //   BaskVM vm{};
+  //   SlangVM vm{};
     
   //   vm.exec(config);
   // }
