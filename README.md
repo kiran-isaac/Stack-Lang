@@ -1,10 +1,10 @@
 # Slang
 
-Slang is a stack based programming language, that is bytecode interpreted. It is absolutely awful and very difficult to write, it is not recommended to use this for anything other than messing around.
+Slang is a bytecode interpreted stack based programming language. It is very complicated to write, and full of bad design decisions! It is not recommended to use this for anything other than messing around. However it was very fun to create! This was my first large c++ project, and I was 17 at the time, hence the code being a mess. However it is a fun language to mess around with. 
 
-## Usage
+# Usage
 
-A Slang program is compiled to bytecode which is interpreted by the Slang virtual machine. A Slang program called "main.sl" would be compiled and output to "main.out", and then run by the virtual machine using the command below. 
+A Slang program is compiled to bytecode which is interpreted by the Slang virtual machine. A Slang program called "main.sl" would be compiled and output to "a.out", and then run by the virtual machine using the command below. 
 
 ```bash
 slang compile main.sl -o a.out
@@ -15,13 +15,35 @@ More information on the Slang CLI can be found by running:
 slang help
 ```
 
-## Building the Standard Library
+## Building and Installation
+Slang uses CMake to build. Run this to install all the dependencies (on ubuntu):
+```bash
+sudo apt install cmake build-essential
+```
+
+The following commands can be used to build the project.
+
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
+
+To install it:
+```bash
+cd build
+sudo ln -s slang /usr/bin/slang
+```
+
+### Building the Standard Library
 Slang has a standard library compiled as Slang bytecode. This can be achieved by using the -std argument, or by putting the lib at /usr/lib/Slang/stdlib where the program will automatically search.
 
 The standard library can be compiled using:
 ```bash
 cd std
-Slang compile -o /usr/lib/Slang/stdlib stack.sl str.sl
+slang compile -o stdlib stack.sl str.sl
+sudo mv stdlib /usr/lib/slang/stdlib
 ```
 
 More standard library modules will be added in future
