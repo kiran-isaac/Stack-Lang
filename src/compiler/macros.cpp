@@ -58,6 +58,7 @@ void Compiler::extract_macros() {
     string rollover = "";
     for (string str : strs) {
         auto words = split_space(str);
+        if (words.size() == 0) continue;
         std::transform(words[0].begin(), words[0].end(), words[0].begin(), ::tolower);
         if (words[0] == "#macro" || rollover != "") {
             string key; 

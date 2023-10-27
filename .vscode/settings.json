@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "*.ejs": "html",
+        "*.asm": "asm-intel-x86-generic",
+        "*.bsk": "swift",
         "*.tcc": "cpp",
         "optional": "cpp",
         "istream": "cpp",
@@ -65,7 +67,11 @@
         "thread": "cpp",
         "cfenv": "cpp",
         "typeindex": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "numbers": "cpp"
     },
-    "C_Cpp.default.compilerPath": "/usr/bin/clang++-14"
+    "C_Cpp.default.compilerPath": "/usr/bin/clang++-14",
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

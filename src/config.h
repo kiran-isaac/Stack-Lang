@@ -10,8 +10,7 @@ using std::string;
 
 enum Mode {
   COMPILE,
-  RUN,
-  STANDALONE
+  RUN
 };
 
 typedef struct File {
