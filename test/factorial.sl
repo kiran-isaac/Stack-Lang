@@ -17,5 +17,4 @@ func factorial_loop
 endfunc
 
 10 :factorial_recur &num :print &newline
-
 10 :factorial_loop &num :print &newline

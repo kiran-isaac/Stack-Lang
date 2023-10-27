@@ -86,7 +86,7 @@
             "program": "${workspaceFolder}/build/slang",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "args": ["-s", "-o", "test.out", "-i", "test/factorial.sl"],
+            "args": ["standalone", "-o", "test.out", "test/factorial.sl"],
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
