@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/slang",
-            "args": ["-s", "-o", "test.out", "-i", "/home/kiran/dev/slangvm/test/factorial.sl"],
+            "args": ["compile", "-o", "test.out", "${workspaceFolder}/test/factorial.sl"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build",
             "environment": [],
