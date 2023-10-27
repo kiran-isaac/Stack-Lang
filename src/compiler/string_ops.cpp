@@ -6,7 +6,7 @@ vector<string> split_space(std::string str)
 {
     auto out = vector<string>();
     string current;
-    bool instring;
+    bool instring = false;
 
     for (char chr : str) {
         if (chr == '"' || chr == '\'') {

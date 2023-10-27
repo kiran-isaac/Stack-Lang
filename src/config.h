@@ -18,11 +18,18 @@ typedef struct File {
   bool is_bytecode;
 } File;
 
-typedef struct BSKConfig {
-  std::vector<string> inputs;
+typedef class BSKConfig {
+public:
+  std::vector<File*> inputs;
   string out;
   string lib;
   Mode mode;
+
+  ~BSKConfig() {
+    for (File *file : inputs) {
+      delete file;
+    }
+  }
 } BSKConfig;
 
 BSKConfig *parse_args(int argc, char *argv[]);

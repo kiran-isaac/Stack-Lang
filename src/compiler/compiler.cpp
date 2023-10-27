@@ -15,9 +15,9 @@ Compiler::Compiler(BSKConfig* config) {
         fout = ofstream(config->out);
     }
 
-    for (string input : config->inputs)
+    for (File *input : config->inputs)
     {   
-        ifstream file(input);
+        ifstream file(input->name);
         char buffer[BUFFER_SIZE] = { 0 };
         file.read(buffer, BUFFER_SIZE);
         string str = buffer;

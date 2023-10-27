@@ -165,7 +165,7 @@ void bool_or(Stack* stack) {
 void bool_xor(Stack* stack) {
     bool op1 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 0: operand")->b();
     bool op2 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 1: operand")->b();
-    stack->push(new BOOL(op1 && !op2 || op2 && !op1));
+    stack->push(new BOOL((op1 && !op2) || (op2 && !op1)));
 }
 
 void bool_not(Stack* stack) {

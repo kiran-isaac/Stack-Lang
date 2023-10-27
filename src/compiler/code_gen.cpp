@@ -36,7 +36,7 @@ vector<BYTE> get_labels(map<string, WORD> labels) {
 }
 
 WORD Compiler::add_constant(Value val) {
-    for (int i = 0; i < constants.size(); i++) {
+    for (size_t i = 0; i < constants.size(); i++) {
         switch (val.type)
         {
         case DT_NUM:
@@ -58,7 +58,7 @@ vector<BYTE> Compiler::code_gen(vector<Token> &tokens) {
     map<string, WORD> labels;
     vector<BYTE> out = vector<BYTE>();
     vector<BYTE> code = vector<BYTE>();
-    int i = 0;
+    size_t i = 0;
     while (i < tokens.size()) {
         Token tk = tokens[i];
         switch (tk.type) {

@@ -32,7 +32,12 @@ vector<BYTE> VM::load(const char* fname) {
 void VM::exec(BSKConfig* config) {
   assert(config->mode == Mode::RUN);
 
-  code = load(config->inputs[0].c_str());
+  for (File* input : config->inputs) {
+    vector<BYTE> code = load(input->name);
+    for (BYTE byte : code) {
+      this->code.push_back(byte);
+    }
+  }
 
   WORD size = GET_WORD();
 
@@ -75,7 +80,7 @@ void VM::exec(BSKConfig* config) {
 
 void VM::read_consts() {
   WORD const_num = GET_WORD();
-  for (int i = 0; i < const_num; i++) {
+  for (size_t i = 0; i < const_num; i++) {
     switch (read_byte()) {
       case DT_NUM: {
         WORD value = GET_WORD();
@@ -91,7 +96,7 @@ void VM::read_consts() {
 
 void VM::read_labels() {
   WORD const_num = GET_WORD();
-  for (int i = 0; i < const_num; i++) {
+  for (size_t i = 0; i < const_num; i++) {
     string str = read_string();
     WORD location = GET_WORD();
     if (labels.find(str) != labels.end()) {

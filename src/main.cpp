@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 
   if (config->mode == Mode::RUN)
   {
+    
     VM vm{};
     vm.exec(config);
     return 0;
@@ -19,6 +20,8 @@ int main(int argc, char *argv[])
     Compiler compiler(config);
     compiler.compile();
   }
-  
+
+  delete config;
+
   return 0;
 }

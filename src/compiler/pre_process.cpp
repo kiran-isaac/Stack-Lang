@@ -9,7 +9,7 @@ void Compiler::expand_strings(vector<Token> &tokens) {
             std::reverse(str.begin(), str.end());
             tokens.erase(token_iterator);
             
-            for (int i = 0; i < str.size(); i++) {
+            for (size_t i = 0; i < str.size(); i++) {
                 if (str[i] == '\\') {
                     tokens.insert(token_iterator, Token{TokenType::CHAR_LIT, "'" + string(1, str[i]) + string(1, str[i+1]) + "'"});
                     i++;
