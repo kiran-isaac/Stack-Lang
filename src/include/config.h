@@ -14,7 +14,11 @@ enum Mode {
 };
 
 typedef struct File {
-  char *name;
+  File(const char *name, bool is_bytecode) {
+    this->name = name;
+    this->is_bytecode = is_bytecode;
+  }
+  const char *name;
   bool is_bytecode;
 } File;
 

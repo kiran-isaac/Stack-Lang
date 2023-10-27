@@ -1,4 +1,4 @@
-#include "stack.h"
+#include "../include/stack.h"
 
 using namespace std;
 
@@ -31,7 +31,7 @@ void Stack::push(Value* value) {
 
 Value* Stack::pop(string error)  {
     if (stack.size() < 1) {
-        FAIL << error;
+        VM_FAIL << error;
     }
     Value* val = stack.back();;
     

@@ -11,11 +11,11 @@
 #include <locale>
 #include <regex>
 #include "token.h"
-#include "../values.h"
+#include "values.h"
 #include "logger.h"
-#include "../opcode.h"
+#include "opcode.h"
 #include "string_ops.h"
-#include "../config.h"
+#include "config.h"
 
 // 10kB
 #define BUFFER_SIZE 1024 * 10

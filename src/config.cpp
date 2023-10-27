@@ -1,4 +1,4 @@
-#include "config.h"
+#include "include/config.h"
 
 enum LAST_ARG {
   NONE,
@@ -66,10 +66,11 @@ BSKConfig *parse_args(int argc, char *argv[]) {
       last = LAST_ARG::LIB;
     } else {
       verify_filename(argv[i]);
-      File *file = new File();
-      file->name = argv[i];
+      char *name = argv[i];
       verify_filename(argv[i]);
-      file->is_bytecode = argv[i][strlen(argv[i]) - 1] != 'l' || argv[i][strlen(argv[i]) - 2] != 's' || argv[i][strlen(argv[i]) - 3] != '.';
+      bool is_bytecode = argv[i][strlen(argv[i]) - 1] != 'l' || argv[i][strlen(argv[i]) - 2] != 's' || argv[i][strlen(argv[i]) - 3] != '.';
+      File *file = new File(name, is_bytecode);
+
       config->inputs.push_back(file);
     }
   }

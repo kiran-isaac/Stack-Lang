@@ -1,4 +1,4 @@
-#include "compiler.h"
+#include "../include/compiler.h"
 
 using namespace std;
 
@@ -13,7 +13,7 @@ void Compiler::extract_functions(vector<Token> &tokens) {
                 func_name = i->val;
                 i++;
             } else {
-                FAIL << "Invalid Function Definition";
+                COMPILER_FAIL << "Invalid Function Definition";
             }
         } else if (func_name != "" && i->type != KW_ENDFUNC) {
             temp.push_back(Token{i->type, i->val});

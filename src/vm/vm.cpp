@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "../include/vm.h"
 
 using namespace std;
 
@@ -42,7 +42,7 @@ void VM::exec(BSKConfig* config) {
   WORD size = GET_WORD();
 
   if (!filesystem::exists(filesystem::path(config->lib))) {
-    FAIL << "Unable to find stdlib at '" << config->lib
+    VM_FAIL << "Unable to find stdlib at '" << config->lib
          << "'. Please build the standard library and move it to this "
             "location or locate it using the -std flag";
   }
@@ -67,7 +67,7 @@ void VM::exec(BSKConfig* config) {
   read_funcs(size);
   VM* vm = new VM();
   if (functions.find("main") == functions.end()) {
-    FAIL << "Cannot locate main function";
+    VM_FAIL << "Cannot locate main function";
   }
   vm->code = functions["main"];
   vm->name = "main";
@@ -100,7 +100,7 @@ void VM::read_labels() {
     string str = read_string();
     WORD location = GET_WORD();
     if (labels.find(str) != labels.end()) {
-      FAIL << "The label " << str << " is defined multiple times" << endl;
+      VM_FAIL << "The label " << str << " is defined multiple times" << endl;
     }
     labels[str] = location;
   }
@@ -144,21 +144,21 @@ void VM::run() {
       case OP_CREATE: {
         string name = read_string();
         if (symbol_table.find(name) != symbol_table.end()) {
-          FAIL << "Stack '" << name << "' already exists";
+          VM_FAIL << "Stack '" << name << "' already exists";
         }
         symbol_table[name] = new Stack(name);
       } break;
       case OP_SWITCH: {
         string name = read_string();
         if (symbol_table.find(name) == symbol_table.end()) {
-          FAIL << "Invalid stack identifier: " << name;
+          VM_FAIL << "Invalid stack identifier: " << name;
         }
         current_stack = (symbol_table[name]);
       } break;
       case OP_GOTO: {
         string name = read_string();
         if (labels.find(name) == labels.end()) {
-          FAIL << "Invalid label identifier: " << name;
+          VM_FAIL << "Invalid label identifier: " << name;
         }
         ip = code_start + labels[name];
       } break;
@@ -170,7 +170,7 @@ void VM::run() {
           continue;
 
         if (labels.find(name) == labels.end()) {
-          FAIL << "Invalid label identifier: " << name;
+          VM_FAIL << "Invalid label identifier: " << name;
         }
         ip = code_start + labels[name];
       } break;
@@ -204,7 +204,7 @@ void VM::run() {
       case OP_BRING: {
         string name = read_string();
         if (symbol_table.find(name) == symbol_table.end()) {
-          FAIL << "Invalid stack identifier: " << name;
+          VM_FAIL << "Invalid stack identifier: " << name;
         }
         Value* val = symbol_table[name]->pop(
             "Cannot bring from stack '" + name + "' to stack '" +
@@ -214,7 +214,7 @@ void VM::run() {
       case OP_COPY: {
         string name = read_string();
         if (symbol_table.find(name) == symbol_table.end()) {
-          FAIL << "Invalid stack identifier for copy: " << name;
+          VM_FAIL << "Invalid stack identifier for copy: " << name;
         }
         Stack* stack = symbol_table[name];
         Value* val =
@@ -226,7 +226,7 @@ void VM::run() {
       case OP_CLONE: {
         string name = read_string();
         if (symbol_table.find(name) == symbol_table.end()) {
-          FAIL << "Invalid stack identifier for clone: " << name;
+          VM_FAIL << "Invalid stack identifier for clone: " << name;
         }
         Stack* original = symbol_table[name];
         for (Value* val : original->stack) {
@@ -244,7 +244,7 @@ void VM::run() {
         current_stack->push(val);
       } break;
       default:
-        FAIL << "Unknown Opcode: " << std::hex << opcode;
+        VM_FAIL << "Unknown Opcode: " << std::hex << opcode;
     }
   }
 }
