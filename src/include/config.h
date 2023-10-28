@@ -5,6 +5,7 @@
 #include <string.h>
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 using std::string;
 
@@ -18,6 +19,10 @@ typedef struct File {
     this->name = name;
     this->is_bytecode = is_bytecode;
   }
+  ~File() {
+    delete name;
+  }
+
   const char *name;
   bool is_bytecode;
 } File;

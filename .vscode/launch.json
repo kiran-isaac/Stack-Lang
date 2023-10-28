@@ -88,7 +88,7 @@
             "preLaunchTask": "build",
             "args": [
                 "run",
-                "${workspaceFolder}/test/helloworld.sl"
+                "${workspaceFolder}/test/multiple_files"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

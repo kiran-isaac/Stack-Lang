@@ -65,16 +65,38 @@ BSKConfig *parse_args(int argc, char *argv[]) {
     } else if (strcmp(argv[i], "-std") == 0) {
       last = LAST_ARG::LIB;
     } else {
-      verify_filename(argv[i]);
-      char *name = argv[i];
-      verify_filename(argv[i]);
+      // Check if the file is a directory
+      if (std::filesystem::is_directory(argv[i])) {
+        for (const auto &entry : std::filesystem::directory_iterator(argv[i])) {
+          std::string fname = entry.path().string();
+          verify_filename((char *)fname.c_str());
 
-      // Check if the file is bytecode or not
-      // if it has the extension .sl, it is not bytecode
-      bool is_bytecode = argv[i][strlen(argv[i]) - 1] != 'l' || argv[i][strlen(argv[i]) - 2] != 's' || argv[i][strlen(argv[i]) - 3] != '.';
-      File *file = new File(name, is_bytecode);
+          // Check if the file is bytecode or not
+          // if it has the extension .sl, it is not bytecode
+          bool is_bytecode = true;
+          if (fname.substr(fname.find_last_of(".") + 1) == "sl") {
+            is_bytecode = false;
+          }
 
-      config->inputs.push_back(file);
+
+          // copy string
+          char *cstr = new char[fname.length() + 1];
+          strcpy(cstr, fname.c_str());
+          config->inputs.push_back(new File(cstr, is_bytecode));
+        }
+      } else {
+        verify_filename(argv[i]);
+
+        // Check if the file is bytecode or not
+        // if it has the extension .sl, it is not bytecode
+        bool is_bytecode = true;
+        std::string fname = std::string(argv[i]);
+        if (fname.substr(fname.find_last_of(".") + 1) == "sl") {
+          is_bytecode = false;
+        }
+
+        config->inputs.push_back(new File(argv[i], is_bytecode));
+      }
     }
   }
 
