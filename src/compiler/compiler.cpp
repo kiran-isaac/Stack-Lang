@@ -136,7 +136,7 @@ std::vector<BYTE> readFile(const char* filename)
 
 std::vector<BYTE> Compiler::compile() {
     extract_macros();
-    remove_directives();
+    remove_directives_and_comments();
     vector<Token> tokens = Tokenize(this->src);
     tokens.reserve(get_macro_length(tokens) + 5);
     expand_macros(tokens);
