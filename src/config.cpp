@@ -21,7 +21,7 @@ void help() {
   std::cout << "  run\t\tRun the file" << std::endl;
   std::cout << "Options:" << std::endl;
   std::cout << "  -o\tSpecify the output file" << std::endl;
-  std::cout << "  -std\tSpecify the standard library file" << std::endl;
+  std::cout << "  -std\tSpecify the standard library file";
   std::cout << std::endl;
 }
 
@@ -68,6 +68,9 @@ BSKConfig *parse_args(int argc, char *argv[]) {
       verify_filename(argv[i]);
       char *name = argv[i];
       verify_filename(argv[i]);
+
+      // Check if the file is bytecode or not
+      // if it has the extension .sl, it is not bytecode
       bool is_bytecode = argv[i][strlen(argv[i]) - 1] != 'l' || argv[i][strlen(argv[i]) - 2] != 's' || argv[i][strlen(argv[i]) - 3] != '.';
       File *file = new File(name, is_bytecode);
 
