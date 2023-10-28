@@ -14,7 +14,6 @@ struct Value {
             int i = (int)d();
             chr = (char)i;
         } else if (type == DT_CHAR) {
-            chr;
             memcpy(&chr, &data, 1);
         }
         return chr;

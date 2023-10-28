@@ -1,4 +1,4 @@
-#include "config.h"
+#include "include/config.h"
 
 enum LAST_ARG {
   NONE,
@@ -7,15 +7,6 @@ enum LAST_ARG {
 };
 
 void verify_filename(char *fname) {
-  int len = strlen(fname);
-
-  // File *file = new File();
-  // file->name = fname;
-  
-  // // Check if the file is a bytecode file
-  // file->is_bytecode = fname[len - 1] != 'l' || fname[len - 2] != 's' || fname[len - 3] != '.';
-
-  // Check if the file exists
   std::ifstream file_stream(fname);
   if (!file_stream.good()) {
     std::cout << "File '" << fname << "' does not exist" << std::endl;
@@ -36,6 +27,7 @@ void help() {
 
 BSKConfig *parse_args(int argc, char *argv[]) {
   BSKConfig *config = new BSKConfig();
+  config->inputs = std::vector<File *>();
   config->out = "a.out";
   config->lib = "/usr/lib/slang/stdlib";
 
@@ -74,7 +66,12 @@ BSKConfig *parse_args(int argc, char *argv[]) {
       last = LAST_ARG::LIB;
     } else {
       verify_filename(argv[i]);
-      config->inputs.push_back(string(argv[i]));
+      char *name = argv[i];
+      verify_filename(argv[i]);
+      bool is_bytecode = argv[i][strlen(argv[i]) - 1] != 'l' || argv[i][strlen(argv[i]) - 2] != 's' || argv[i][strlen(argv[i]) - 3] != '.';
+      File *file = new File(name, is_bytecode);
+
+      config->inputs.push_back(file);
     }
   }
 

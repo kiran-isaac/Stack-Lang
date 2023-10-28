@@ -1,4 +1,4 @@
-#include "inbuilt.h"
+#include "../include/inbuilt.h"
 
 using namespace std;
 
@@ -26,7 +26,7 @@ void push_string(Stack* stack, string str) {
 void call_inbuilt(std::string name, Stack* stack) {
     func_ptr ptr = funcMap[name];
     if (ptr == nullptr) {
-        FAIL << "Cannot locate inbuilt: " << name;
+        VM_FAIL << "Cannot locate inbuilt: " << name;
     }
     funcMap[name](stack);
 }
@@ -50,7 +50,7 @@ void print(Stack* stack) {
             cout << pop_string(stack, "[Inbuilt Function : print] Cannot pop string");
             break;
         default:
-            FAIL << "[Inbuilt Function : print]: Invalid value for print datatype. Push the print datatype before calling print";
+            VM_FAIL << "[Inbuilt Function : print]: Invalid value for print datatype. Push the print datatype before calling print";
     }
 }
 
@@ -165,7 +165,7 @@ void bool_or(Stack* stack) {
 void bool_xor(Stack* stack) {
     bool op1 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 0: operand")->b();
     bool op2 = stack->pop("[Inbuilt Function : ==] Cannot pop parameter 1: operand")->b();
-    stack->push(new BOOL(op1 && !op2 || op2 && !op1));
+    stack->push(new BOOL((op1 && !op2) || (op2 && !op1)));
 }
 
 void bool_not(Stack* stack) {
