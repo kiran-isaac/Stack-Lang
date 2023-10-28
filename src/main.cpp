@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
     compiler_config->mode = Mode::COMPILE;
     compiler_config->inputs = to_be_compiled;
     compiler_config->out = "temp.out";
+    compiler_config->lib = config->lib;
 
     Compiler compiler(compiler_config);
     compiler.compile();

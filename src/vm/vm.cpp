@@ -19,56 +19,57 @@ VM::VM() {
 }
 
 vector<BYTE> VM::load(const char* fname) {
-  vector<BYTE> code;
-  char buffer[BUFFER_SIZE];
-  ifstream file(fname, ios::in | ios::binary);
-  file.read(buffer, BUFFER_SIZE);
-  for (char chr : buffer) {
-    code.push_back((uint8_t)chr);
+  // load file into vector of bytes
+  ifstream file(fname, ios::binary | ios::ate);
+  if (!file.is_open()) {
+    VM_FAIL << "Unable to open file '" << fname << "'";
   }
-  return code;
+  streampos size = file.tellg();
+  vector<BYTE> buffer(size);
+  file.seekg(0, ios::beg);
+  file.read((char*)&buffer[0], size);
+  file.close();
+  return buffer;
 }
 
 void VM::exec(BSKConfig* config) {
   assert(config->mode == Mode::RUN);
 
+  WORD size = 0;
+
+  vector<vector<BYTE>> files = vector<vector<BYTE>>();
+
+  if (!filesystem::exists(filesystem::path(config->lib))) {
+    VM_FAIL << "Unable to find stdlib at '" << config->lib
+            << "'. Please build the standard library and move it to this "
+               "location or locate it using the -std flag";
+  }
+
+  // add stdlib to inputs so it can be loaded
+  config->inputs.push_back(new File(config->lib.c_str(), true));
+
   for (File* input : config->inputs) {
     vector<BYTE> code = load(input->name);
-    for (BYTE byte : code) {
+
+    size += COMBINE_8_BYTES(code[0], code[1], code[2], code[3], code[4],
+                            code[5], code[6], code[7]);
+
+    code = vector<BYTE>(code.begin() + 8, code.end());
+
+    files.push_back(code);
+  }
+
+  for (vector<BYTE> file : files) {
+    for (BYTE byte : file) {
       this->code.push_back(byte);
     }
   }
 
-  WORD size = GET_WORD();
-
-  if (!filesystem::exists(filesystem::path(config->lib))) {
-    VM_FAIL << "Unable to find stdlib at '" << config->lib
-         << "'. Please build the standard library and move it to this "
-            "location or locate it using the -std flag";
-  }
-
-  vector<BYTE> std = load(config->lib.c_str());
-  BYTE b0 = std[0];
-  BYTE b1 = std[1];
-  BYTE b2 = std[2];
-  BYTE b3 = std[3];
-  BYTE b4 = std[4];
-  BYTE b5 = std[5];
-  BYTE b6 = std[6];
-  BYTE b7 = std[7];
-
-  std = vector<BYTE>(std.begin() + 8, std.end());
-
-  for (BYTE byte : std) {
-    code.push_back(byte);
-  }
-  size += COMBINE_8_BYTES(b0, b1, b2, b3, b4, b5, b6, b7);
-
   read_funcs(size);
-  VM* vm = new VM();
   if (functions.find("main") == functions.end()) {
     VM_FAIL << "Cannot locate main function";
   }
+  VM* vm = new VM();
   vm->code = functions["main"];
   vm->name = "main";
   vm->constants = constants;
@@ -107,12 +108,13 @@ void VM::read_labels() {
 }
 
 void VM::read_funcs(int num) {
+  auto data = this->code.data();
   for (int i = 0; i < num; i++) {
     string str = read_string();
     WORD length = GET_WORD();
-    vector<BYTE> test =
+    vector<BYTE> func_contents =
         vector<BYTE>(code.begin() + ip, code.begin() + ip + length);
-    functions[str] = test;
+    functions[str] = func_contents;
     ip += length;
   }
   ip = 0;
