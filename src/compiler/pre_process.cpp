@@ -75,10 +75,21 @@ void Compiler::reverse(std::vector<Token> &tokens) {
     }
 }
 
-void Compiler::remove_directives() {
+void Compiler::remove_directives_and_comments() {
     vector<string> strs = split_lines(src);
     vector<string>::iterator i;
     for (i = strs.begin(); i != strs.end(); i++) {
+        // remove whitespace from the start and end of the line
+        
+        for (string::iterator j = i->begin(); j != i->end(); j++) {
+            if (*j == ' ' || *j == '\t') {
+                i->erase(j);
+                j--;
+            } else {
+                break;
+            }
+        }
+
         if (i->substr(0, 2) == "//" || i->substr(0, 1) == "#") {
             vector<string> words = split_space(*i);
             if (words[words.size()- 1] == "->") {
