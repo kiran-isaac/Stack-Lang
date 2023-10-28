@@ -108,7 +108,6 @@ void VM::read_labels() {
 }
 
 void VM::read_funcs(int num) {
-  auto data = this->code.data();
   for (int i = 0; i < num; i++) {
     string str = read_string();
     WORD length = GET_WORD();
@@ -183,6 +182,9 @@ void VM::run() {
             break;
           case FUNC_CALL_MODE_LOCAL:
             string name = read_string();
+            if (functions.find(name) == functions.end()) {
+              VM_FAIL << "Could not find function with identifier: " << name;
+            }
             VM* vm = new VM();
             vm->code = functions[name];
             vm->functions = functions;
