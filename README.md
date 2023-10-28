@@ -1,20 +1,10 @@
 # Slang
 
-Slang is a bytecode interpreted stack based programming language. It is very complicated to write, and full of bad design decisions! It is not recommended to use this for anything other than messing around. However it was very fun to create! This was my first large c++ project, and I was 17 at the time, hence the code being a mess. However it is a fun language to mess around with. 
+Slang is a bytecode interpreted stack based programming language. It is very complicated to write, and full of bad design decisions! It is not recommended to use this for anything other than messing around. However it was very fun to create! This was my first large c++ project, and I was 17 at the time, hence the code being a mess. However it is a fun language to mess around with.
 
-# Usage
-
-A Slang program is compiled to bytecode which is interpreted by the Slang virtual machine. A Slang program called "main.sl" would be compiled and output to "a.out", and then run by the virtual machine using the command below. 
-
-```bash
-slang compile main.sl -o a.out
-```
-
-More information on the Slang CLI can be found by running:
-```bash
-slang help
-```
-
+# Setup
+## Support
+Slang is only supported on Linux. It may work on other platforms, but it has not been tested.
 ## Building and Installation
 Slang uses CMake to build. Run this to install all the dependencies (on ubuntu):
 ```bash
@@ -47,6 +37,19 @@ sudo mv stdlib /usr/lib/slang/stdlib
 ```
 
 More standard library modules will be added in future
+
+# Usage
+
+A Slang program is compiled to bytecode which is interpreted by the Slang virtual machine. A Slang program called "main.sl" would be compiled and output to "a.out", and then run by the virtual machine using the command below. 
+
+```bash
+slang compile main.sl -o a.out
+```
+
+More information on the Slang CLI can be found by running:
+```bash
+slang help
+```
 
 # Programming in Slang
 ## Syntax

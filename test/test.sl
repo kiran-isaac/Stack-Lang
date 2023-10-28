@@ -9,7 +9,9 @@ func fib_recur
     small: 1
 end: endfunc  
 
-4 :fib_recur &num :print &newline
+func main
+    4 :fib_recur &num :print &newline
+endfunc
 
 // &cs i 0
 // loop_start: &s i 1 + &sd copy i dup 10 < branch end
