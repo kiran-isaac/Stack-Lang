@@ -52,7 +52,7 @@ public:
     void add_function(std::string name);
     std::vector<BYTE> get_constants();
     std::vector<BYTE> get_funcs();
-    void remove_directives();
+    void remove_directives_and_comments();
     void expand_macros(std::vector<Token> &tokens);
     void extract_macros();
     void expand_strings(std::vector<Token> &tokens);
