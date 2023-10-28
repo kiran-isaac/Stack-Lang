@@ -9,9 +9,9 @@
 #include <time.h>
 #include "values.h"
 #include "stack.h"
-#include "../byte_ops.h"
+#include "../include/byte_ops.h"
 #include "logger.h"
-#include "../datatypes.h"
+#include "../include/datatypes.h"
 
 void init_inbuilts();
 

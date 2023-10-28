@@ -11,6 +11,15 @@ class CompilerErrorLogger : public std::basic_ostringstream<char> {
         }
 };
 
-#define FAIL CompilerErrorLogger()
+class VMErrorLogger : public std::basic_ostringstream<char> {
+ public:
+  ~VMErrorLogger() {
+    fprintf(stderr, "Fatal runtime error: %s\n", str().c_str());
+    exit(1);
+  }
+};
+
+#define COMPILER_FAIL CompilerErrorLogger()
+#define VM_FAIL VMErrorLogger()
 
 #endif

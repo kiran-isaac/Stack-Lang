@@ -1,4 +1,4 @@
-#include "inbuilt.h"
+#include "../include/inbuilt.h"
 
 using namespace std;
 
@@ -26,7 +26,7 @@ void push_string(Stack* stack, string str) {
 void call_inbuilt(std::string name, Stack* stack) {
     func_ptr ptr = funcMap[name];
     if (ptr == nullptr) {
-        FAIL << "Cannot locate inbuilt: " << name;
+        VM_FAIL << "Cannot locate inbuilt: " << name;
     }
     funcMap[name](stack);
 }
@@ -50,7 +50,7 @@ void print(Stack* stack) {
             cout << pop_string(stack, "[Inbuilt Function : print] Cannot pop string");
             break;
         default:
-            FAIL << "[Inbuilt Function : print]: Invalid value for print datatype. Push the print datatype before calling print";
+            VM_FAIL << "[Inbuilt Function : print]: Invalid value for print datatype. Push the print datatype before calling print";
     }
 }
 

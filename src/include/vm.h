@@ -11,14 +11,15 @@
 #include <fstream>
 #include <cstdio>
 #include <filesystem>
-#include "../datatypes.h"
-#include "../byte_ops.h"
-#include "../opcode.h"
+#include "../include/datatypes.h"
+#include "../include/byte_ops.h"
+#include "../include/opcode.h"
 #include "stack.h"
 #include "logger.h"
 #include "../values.h"
-#include "inbuilt.h"
-#include "../config.h"
+#include "../include/opcode.h"
+#include "../include/inbuilt.h"
+#include "../include/config.h"
 
 // 10kB
 #define BUFFER_SIZE 1024 * 10

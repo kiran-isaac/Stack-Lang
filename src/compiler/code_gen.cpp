@@ -1,4 +1,4 @@
-#include "compiler.h"
+#include "../include/compiler.h"
 
 using namespace std;
 
@@ -103,7 +103,7 @@ vector<BYTE> Compiler::code_gen(vector<Token> &tokens) {
                     ADD((tk.type == KW_GOTO) ? OP_GOTO : OP_BRANCH);
                     if (tk2.type != TokenType::ID) {
                         string macro_error = (tk.macro != "") ? " (expanded from macro: " + tk.macro + ")" : "";
-                        FAIL << "Invalid label id in GOTO: " << tk2.val << macro_error;
+                        COMPILER_FAIL << "Invalid label id in GOTO: " << tk2.val << macro_error;
                     }
                     for (char chr : tk2.val) {
                         ADD((uint8_t)chr);
@@ -142,7 +142,7 @@ vector<BYTE> Compiler::code_gen(vector<Token> &tokens) {
                     ADD(OP_CLONE);
                     if (tk2.type != TokenType::ID) {
                         string macro_error = MACRO_ERROR(tk2);
-                        FAIL << "Invalid clone id: " << tk2.val << macro_error;
+                        COMPILER_FAIL << "Invalid clone id: " << tk2.val << macro_error;
                     }
 
                     for (char chr : tk2.val) {
@@ -159,7 +159,7 @@ vector<BYTE> Compiler::code_gen(vector<Token> &tokens) {
                     ADD(OP_SWITCH);
                     if (tk2.type != TokenType::ID) {
                         string macro_error = MACRO_ERROR(tk2);
-                        FAIL << "Invalid switch id: " << tk2.val << macro_error;
+                        COMPILER_FAIL << "Invalid switch id: " << tk2.val << macro_error;
                     }
                     for (char chr : tk2.val) {
                         ADD((uint8_t)chr);
@@ -179,7 +179,7 @@ vector<BYTE> Compiler::code_gen(vector<Token> &tokens) {
                         Token tk3 = tokens[i+2];
                         if (tk3.type != TokenType::ID) {
                             string macro_error = MACRO_ERROR(tk3);
-                            FAIL << "Invalid switch id: " << tk3.val << macro_error;
+                            COMPILER_FAIL << "Invalid switch id: " << tk3.val << macro_error;
                         }
                         for (char chr : tk3.val) {
                             ADD((uint8_t)chr);
@@ -193,7 +193,7 @@ vector<BYTE> Compiler::code_gen(vector<Token> &tokens) {
 
                     if (tk.type != TokenType::ID) {
                         string macro_error = MACRO_ERROR(tk);
-                        FAIL << "Invalid create id: " << tk.val << macro_error;
+                        COMPILER_FAIL << "Invalid create id: " << tk.val << macro_error;
                     }
                     for (char chr : tk.val) {
                         ADD((uint8_t)chr);
@@ -209,7 +209,7 @@ vector<BYTE> Compiler::code_gen(vector<Token> &tokens) {
                     ADD((tk.type == KW_BRING) ? OP_BRING : OP_COPY);
                     if (tk2.type != TokenType::ID) {
                         string macro_error = MACRO_ERROR(tk2);
-                        FAIL << "Invalid switch id: " << tk2.val << macro_error;
+                        COMPILER_FAIL << "Invalid switch id: " << tk2.val << macro_error;
                     }
                     for (char chr : tk2.val) {
                         ADD((uint8_t)chr);
@@ -220,9 +220,9 @@ vector<BYTE> Compiler::code_gen(vector<Token> &tokens) {
                 }
                 break;
             case TokenType::MACRO:
-                FAIL << "Cannot expand macro: " << tk.val;
+                COMPILER_FAIL << "Cannot expand macro: " << tk.val;
             default:
-                FAIL << "Invalid Token in code generation: " << tk.val << MACRO_ERROR(tk);
+                COMPILER_FAIL << "Invalid Token in code generation: " << tk.val << MACRO_ERROR(tk);
         }
     }
 

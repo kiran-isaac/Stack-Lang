@@ -1,4 +1,4 @@
-#include "compiler.h"
+#include "../include/compiler.h"
 
 using namespace std;
 
@@ -8,7 +8,7 @@ vector<Token> Compiler::Tokenize(string src, string macro_id) {
     for (string str : strs) {
         TokenType tktpe = match(str);
         if (tktpe == TokenType::INVALID) {
-            FAIL << "Invalid token: " << str << ((macro_id == "") ? ""  : " in definition of macro: ") << macro_id;  
+            COMPILER_FAIL << "Invalid token: " << str << ((macro_id == "") ? ""  : " in definition of macro: ") << macro_id;  
         }
         Token tk = Token{tktpe, str, macro_id};
         output.push_back(tk);

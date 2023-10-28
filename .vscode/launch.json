@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "Compile",
             "type": "cppdbg",
@@ -63,6 +64,34 @@
             "args": ["-r", "-i", "${workspaceFolder}/test/a.out"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Auto Compile",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/slang",
+            "preLaunchTask": "build",
+            "args": [
+                "run",
+                "${workspaceFolder}/test/helloworld.sl"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

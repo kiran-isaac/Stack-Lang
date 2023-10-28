@@ -1,4 +1,4 @@
-#include "compiler.h"
+#include "../include/compiler.h"
 
 using namespace std;
 
@@ -16,7 +16,7 @@ int Compiler::get_macro_length(vector<Token> tokens) {
             continue;
         }
         if (macros_map.find(token_iterator->val) == macros_map.end()) {
-            FAIL << "Cannot expand macro: " << token_iterator->val << endl;
+            COMPILER_FAIL << "Cannot expand macro: " << token_iterator->val << endl;
         }
         size += get_macro_length(macros_map[token_iterator->val]) - 1;
         token_iterator++;  
@@ -48,7 +48,7 @@ void Compiler::expand_macros(vector<Token> &tokens) {
             }
         }
         if (!found) {
-            FAIL << "Cannot expand macro: " << token_iterator->val << endl;
+            COMPILER_FAIL << "Cannot expand macro: " << token_iterator->val << endl;
         }
     } while (token_iterator != tokens.end());
 }
@@ -67,7 +67,7 @@ void Compiler::extract_macros() {
             } else {
                 key = words[1];
                 if (!regex_match(key, regex("^&[A-Za-z0-9_]+$"))) {
-                    FAIL << "Invalid macro name: '" << key << "'. Must start with &, and must contain only alphanumeric characters, plus _";
+                    COMPILER_FAIL << "Invalid macro name: '" << key << "'. Must start with &, and must contain only alphanumeric characters, plus _";
                 }
                 words.erase(words.begin());
                 words.erase(words.begin());

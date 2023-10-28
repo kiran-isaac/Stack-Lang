@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
-#include "../values.h"
+#include "values.h"
 #include "logger.h"
 
 class Stack {
