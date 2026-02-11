@@ -1,6 +1,6 @@
 # Slang
 
-Slang is a bytecode interpreted stack based programming language. It is very complicated to write, and full of bad design decisions! It is not recommended to use this for anything other than messing around. However it was very fun to create! This was my first large c++ project, and I was 17 at the time, hence the code being a mess. However it is a fun language to mess around with.
+Slang is a bytecode interpreted stack based programming language. It is very complicated to write, and full of bad design decisions! It is not recommended to use this for anything other than messing around. However it was very fun to create! This was my first large c++ project, and I was 16/17 at the time, hence the code being a mess. However it is a fun language to mess around with.
 
 # Setup
 ## Support
